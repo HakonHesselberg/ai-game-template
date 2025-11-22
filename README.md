@@ -276,7 +276,7 @@ Types:
 
 ## License
 
-[Choose your license - MIT, Apache 2.0, etc.]
+[GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Acknowledgments
 
