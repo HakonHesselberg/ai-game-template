@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { targetPosition } from '../src/core/game.ts';
+import { targetPosition } from '../../src/core/game.ts';
 import {
   REPLAY_VERSION, advanceReplay, assertReplayMatches, canonicalJson,
   restoreReplay, startReplay, stateDigest,

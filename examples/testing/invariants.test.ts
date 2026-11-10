@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { applyCommand, createGame, isGameCommand, stepGame } from '../src/core/game.ts';
-import type { GameCommand, GameState } from '../src/core/game.ts';
-import { assertGameInvariants } from '../src/core/invariants.ts';
-import { nextRandom } from '../src/core/prng.ts';
+import { applyCommand, createGame, isGameCommand, stepGame } from '../../src/core/game.ts';
+import type { GameCommand, GameState } from '../../src/core/game.ts';
+import { assertGameInvariants } from './invariants.ts';
+import { nextRandom } from '../../src/core/prng.ts';
 import { generateCommands, shrinkCommands } from './helpers/generation.ts';
 
 test('applyCommand_WithMalformedCommand_RejectsWithoutChangingState', () => {

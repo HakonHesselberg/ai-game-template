@@ -1,18 +1,9 @@
 # Claude Code entry point
 
-Read [AGENTS.md](AGENTS.md) first. It is the canonical instruction file for
-all coding agents; this file adds no competing project policy.
+Read [AGENTS.md](AGENTS.md) first; it is the canonical policy for every agent.
+For presentation changes, use [the rendering decision guide](docs/RENDERING_DECISION.md)
+and update [the ADR](docs/decisions/0001-renderer.md).
 
-Before implementing game visuals, read
-[docs/RENDERING_DECISION.md](docs/RENDERING_DECISION.md) and complete the
-project's [rendering ADR](docs/decisions/0001-renderer.md). Canvas 2D and
-Three.js may be used together when they have distinct responsibilities.
-
-This repository is a **runnable hybrid web-game starter** with local commands
-in [docs/PLATFORM.md](docs/PLATFORM.md). Run `npm run check` and the Chromium
-`npm run test:browser` smoke test for changes to visuals or interactions.
-Do not use GitHub Actions.
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md),
-[docs/TESTING.md](docs/TESTING.md), and
-[docs/COMMON_PITFALLS.md](docs/COMMON_PITFALLS.md) as needed.
+Local commands are in [README.md](README.md). Run `npm run check`, and run the
+browser smoke test when visuals or input change. Report checks that cannot
+run. Never use GitHub Actions.

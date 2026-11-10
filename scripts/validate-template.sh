@@ -12,14 +12,17 @@ fail() {
 
 [ "$(sed -n '1p' LICENSE)" = 'MIT License' ] ||
     fail 'LICENSE must contain the selected MIT license.'
-grep -q 'Copyright (c) 2025 HakonHesselberg' LICENSE ||
-    fail 'LICENSE must contain a real copyright holder.'
-grep -q 'MIT' README.md && grep -q 'MIT' TEMPLATE_GUIDE.md ||
-    fail 'README and TEMPLATE_GUIDE must agree with LICENSE.'
+grep -Eq '^Copyright \(c\) [0-9]{4} .+' LICENSE ||
+    fail 'MIT LICENSE must contain a year and copyright holder.'
+if grep -Eqi '(your[ -]?name|placeholder|<copyright|\[name\])' LICENSE; then
+    fail 'MIT copyright attribution still contains a placeholder.'
+fi
+grep -q 'MIT' README.md ||
+    fail 'README must agree with the MIT LICENSE.'
 [ -f AGENTS.md ] && [ -f docs/RENDERING_DECISION.md ] &&
     [ -f docs/decisions/0001-renderer.md ] ||
     fail 'Agent and rendering decision documentation is missing.'
-if grep -Ei 'GPL-3\.0|GPLv3' README.md TEMPLATE_GUIDE.md >/dev/null; then
+if grep -Ei 'GPL-3\.0|GPLv3' README.md >/dev/null; then
     fail 'Conflicting GPL licensing statements remain in setup documentation.'
 fi
 

@@ -1,8 +1,8 @@
 /** A reference replay adapter for the small sample game, not a universal engine. */
 import { createHash } from 'node:crypto';
-import { applyCommand, createGame, isGameCommand, stepGame } from '../../src/core/game.ts';
-import type { GameCommand, GameState } from '../../src/core/game.ts';
-import { assertGameInvariants } from '../../src/core/invariants.ts';
+import { applyCommand, createGame, isGameCommand, stepGame } from '../../../src/core/game.ts';
+import type { GameCommand, GameState } from '../../../src/core/game.ts';
+import { assertGameInvariants } from '../invariants.ts';
 
 export const REPLAY_VERSION = 1;
 

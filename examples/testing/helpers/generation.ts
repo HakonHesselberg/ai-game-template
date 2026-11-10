@@ -1,5 +1,5 @@
-import type { GameCommand } from '../../src/core/game.ts';
-import { nextRandom } from '../../src/core/prng.ts';
+import type { GameCommand } from '../../../src/core/game.ts';
+import { nextRandom } from '../../../src/core/prng.ts';
 
 /** Reproducible example generator; generated games replace command weights. */
 export function generateCommands(seed: number, length: number): GameCommand[] {

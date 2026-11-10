@@ -72,9 +72,17 @@ test('checkArchitecture_WithCoreAmbientState_RejectsRandomTimeAndBrowserGlobals'
   assert.match(result, /setTimeout/);
 });
 
-test('checkArchitecture_WithExternalDependency_RejectsPureLayerImports', (t) => {
-  const root = fixture(t, { 'src/core/game.ts': "import * as THREE from 'three'; export const x = THREE;" });
-  assert.match(errors(root), /core must not import external packages: three/);
+test('checkArchitecture_WithRendererDependency_RejectsPureLayerImports', (t) => {
+  const root = fixture(t, { 'src/core/game.ts': "import * as THREE from 'three'; import fs from 'fs'; export const x = [THREE, fs];" });
+  assert.match(errors(root), /core must not import renderer\/platform packages: three/);
+  assert.match(errors(root), /core must not import renderer\/platform packages: fs/);
+});
+
+test('checkArchitecture_WithPureDependencyAndTypeOnlyDate_AllowsBoth', (t) => {
+  const root = fixture(t, {
+    'src/core/game.ts': "import { produce } from 'immer'; export type GameDate = Date; export const update = produce;",
+  });
+  assert.equal(errors(root), '');
 });
 
 test('checkArchitecture_WithDirectRendererCoupling_RequiresSharedContract', (t) => {
@@ -111,12 +119,21 @@ test('checkArchitecture_WithTsconfigAlias_DoesNotBypassLayerRule', (t) => {
   assert.match(errors(root), /core must not import presentation/);
 });
 
-test('checkArchitecture_WithUnknownLayerOrMissingFile_ReportsInsteadOfSkipping', (t) => {
+test('checkArchitecture_WithCustomFeatureFolder_AcceptsApplicationComposition', (t) => {
   const root = fixture(t, {
-    'src/unknown/other.ts': 'export const x = 1;',
-    'src/core/a.ts': "import './missing'; export const a = 1;",
+    'src/core/game.ts': 'export const state = 1;',
+    'src/features/arena/arena.ts': "import { state } from '../../core/game'; export const arena = state;",
+    'src/application/start.ts': "import { arena } from '../features/arena/arena'; export const start = arena;",
   });
-  assert.match(errors(root), /unknown src\/ layer/);
+  assert.equal(errors(root), '');
+});
+
+test('checkArchitecture_WithCoreImportingFeatureOrMissingFile_ReportsBoth', (t) => {
+  const root = fixture(t, {
+    'src/features/arena.ts': 'export const arena = 1;',
+    'src/core/a.ts': "import '../features/arena'; import './missing'; export const a = 1;",
+  });
+  assert.match(errors(root), /core must not import feature/);
   assert.match(errors(root), /unresolved relative import/);
 });
 

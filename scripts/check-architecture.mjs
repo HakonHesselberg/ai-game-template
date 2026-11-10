@@ -1,22 +1,28 @@
 #!/usr/bin/env node
 /** Local, syntax-aware boundary checks. TypeScript 7 builds; Babel parses AST. */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { builtinModules } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from '@babel/parser';
 import { getTsconfig, createPathsMatcher } from 'get-tsconfig';
 
-// Adjust the policy only after a generated game records its architecture.
-// Application is the composition root; individual renderers cannot own it.
+// Application is the composition root; custom feature folders are permitted.
+// Known pure layers remain protected even as a generated game grows.
 const allowedImports = {
   shared: new Set(['shared']),
   core: new Set(['core', 'shared']),
   data: new Set(['data', 'core', 'shared']),
   presentation: new Set(['presentation', 'data', 'core', 'shared']),
-  application: new Set(['application', 'presentation', 'data', 'core', 'shared']),
-  entry: new Set(['entry', 'application', 'presentation', 'data', 'core', 'shared']),
+  feature: new Set(['feature', 'presentation', 'data', 'core', 'shared']),
+  application: new Set(['application', 'feature', 'presentation', 'data', 'core', 'shared']),
+  entry: new Set(['entry', 'application', 'feature', 'presentation', 'data', 'core', 'shared']),
 };
 const pureLayers = new Set(['shared', 'core', 'data']);
+const nodeBuiltins = new Set(builtinModules.map((name) => name.replace(/^node:/, '').split('/')[0]));
+// Other packages may be pure, but they still require human review. This is
+// a boundary guard, not a proof that every installed dependency is deterministic.
+const platformPackages = /^(?:node:|three(?:\/|$)|@react-three\/|react(?:\/|$)|react-dom(?:\/|$)|pixi\.js(?:\/|$)|phaser(?:\/|$)|@babylonjs\/|vite(?:\/|$)|@playwright\/)/;
 const prohibitedGlobals = new Set([
   'Date', 'performance', 'window', 'document', 'navigator', 'location',
   'localStorage', 'sessionStorage', 'requestAnimationFrame', 'cancelAnimationFrame',
@@ -46,7 +52,7 @@ function layerFor(srcRoot, filename) {
   if (!within(srcRoot, filename)) return null;
   const parts = path.relative(srcRoot, filename).split(path.sep);
   if (parts.length === 1) return 'entry';
-  return Object.hasOwn(allowedImports, parts[0]) ? parts[0] : 'unclassified';
+  return Object.hasOwn(allowedImports, parts[0]) ? parts[0] : 'feature';
 }
 
 function rendererFor(srcRoot, filename) {
@@ -114,6 +120,7 @@ function isNonReferenceName(node, parent, parentKey) {
   if ((parent.type === 'MemberExpression' || parent.type === 'OptionalMemberExpression') && parentKey === 'property' && !parent.computed) return true;
   if ((parent.type === 'ObjectProperty' || parent.type === 'ObjectMethod') && parentKey === 'key' && !parent.computed && !parent.shorthand) return true;
   if ((parent.type === 'TSPropertySignature' || parent.type === 'TSMethodSignature') && parentKey === 'key') return true;
+  if (parent.type === 'TSTypeReference' && parentKey === 'typeName') return true;
   return false;
 }
 
@@ -136,9 +143,6 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
   for (const filename of files) {
     const layer = layerFor(srcRoot, filename);
     const renderer = rendererFor(srcRoot, filename);
-    if (layer === 'unclassified') {
-      errors.push(`${path.relative(root, filename)}:1:1 unknown src/ layer; put pure utilities in src/shared/ or update the architecture policy`);
-    }
     let syntax;
     try {
       syntax = parse(readFileSync(filename, 'utf8'), { sourceType: 'unambiguous', plugins: ['typescript', 'jsx'] });
@@ -167,8 +171,8 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
           const target = path.resolve(path.dirname(filename), specifier);
           if (!within(srcRoot, target)) report(filename, source, `relative import leaves src/: ${specifier}`);
           else if (!resolved) report(filename, source, `unresolved relative import: ${specifier}`);
-        } else if (pureLayers.has(layer)) {
-          report(filename, source, `${layer} must not import external packages: ${specifier}`);
+        } else if (pureLayers.has(layer) && (platformPackages.test(specifier) || nodeBuiltins.has(specifier.split('/')[0]))) {
+          report(filename, source, `${layer} must not import renderer/platform packages: ${specifier}`);
         }
       }
 

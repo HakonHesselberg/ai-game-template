@@ -1,4 +1,4 @@
-import type { GameState } from './game';
+import type { GameState } from '../../src/core/game.ts';
 
 /** Example invariants: replace with rules specific to each generated game. */
 export function assertGameInvariants(value: unknown): asserts value is GameState {

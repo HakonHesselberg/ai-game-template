@@ -20,9 +20,9 @@ is a renderer-integration demonstration, not a prescribed game design.
   no-Actions template check. Do not bypass an architecture finding without
   recording and deliberately updating the policy in
   `scripts/check-architecture.mjs`.
-- Preserve deterministic replay and state-invariant coverage when changing
-  game rules. Revise golden baselines only with an explicit reason; a changed
-  digest alone is not proof of correctness. See `docs/REPLAY_TESTING.md`.
+- When a game needs replay, adapt the optional `examples/testing/` patterns.
+  Golden baselines require a deliberate revision reason; a changed digest
+  alone is not proof of correctness. See `docs/REPLAY_TESTING.md`.
 - Run `npm run test:browser` for renderer, input and layout changes and record
   actual browser/device observations in `docs/PLAYTEST_MATRIX.md`. Never
   describe a simulated viewport as a real device or an unrun check as passing.
@@ -47,9 +47,9 @@ why a layer has no role.
 
 ## Work and handoff
 
-Read only relevant architecture/platform/testing docs. Local commands are
-`npm ci`, `npm run dev`, `npm run lint:architecture`, `npm test`, `npm run build`, `npm run check` and
-`npm run test:browser` (Chromium required). Before finishing,
+Read only relevant architecture/testing docs. Commands are documented in
+`README.md`, including optional `npm run test:examples` and Chromium checks.
+Before finishing,
 report changed paths, checks actually executed, browser/device checks not run,
 risks and the next action. Do not change licensing or add dependencies without
 a concrete need and the owner's authorization.

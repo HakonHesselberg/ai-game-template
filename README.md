@@ -1,77 +1,78 @@
 # AI Game Template
 
-An **MIT-licensed, runnable TypeScript/Vite web-game starter** for AI-assisted
-development. The small sample combines **Three.js** (interactive 3D world),
-**Canvas 2D** (camera-aligned targeting marker) and **HTML/CSS** (responsive,
-accessible controls). Use only the layers your actual game needs.
+An **MIT-licensed TypeScript/Vite web-game starter** for AI-assisted development.
+Its small hybrid demo combines **HTML/CSS** controls, an independent **Canvas 2D**
+targeting overlay and a real **Three.js** world. They have separate jobs, share
+one deterministic game state and use one simulation clock. A new game can
+remove any renderer it does not need.
 
-**No GitHub Actions.** All verification runs locally.
+**No GitHub Actions.** All checks are local.
 
-## Start
+## Quick start
 
-Use GitHub's **Use this template** on
-[ai-game-template](https://github.com/HakonHesselberg/ai-game-template), then:
+Create a repository using GitHub's **Use this template** button, then:
 
 ```bash
-nvm use              # Recommended Node.js 26.13.0 LTS
-npm ci
-npm run dev          # http://127.0.0.1:5173
-npm test             # Headless rules, golden replay, seeded invariants
-npm run build        # Strict TypeScript check + Vite production build
-npm run check        # Architecture + types + tests + build + template guard
+nvm use               # Recommended version in .nvmrc
+npm ci                # Locked dependencies
+npm run dev           # http://127.0.0.1:5173
+npm run check         # Architecture, TypeScript, unit tests, build, template guard
 ```
 
-For a real-browser smoke test, install Chromium through Playwright once and run:
+For production-browser verification (required after rendering/input changes):
 
 ```bash
 npx playwright install chromium
-npm run test:browser
+npm run test:browser   # Builds and previews the production bundle
 ```
 
-If Chromium is already installed elsewhere, set `CHROMIUM_PATH=/path/to/chromium`
-for `npm run test:browser` instead. Playwright builds and previews the **production
-bundle** to check Canvas 2D/Three.js alignment, DOM controls, pointer and touch,
-high-DPR backing surfaces, portrait/landscape resize and WebGL recovery where
-supported. Browser/device observations are not inferred from source code.
+Set `CHROMIUM_PATH=/path/to/chromium` if using an existing system Chromium.
+Browser emulation is not a real device test. Record actual results in
+[the playtest matrix](docs/PLAYTEST_MATRIX.md). A missing browser is not a pass.
 
-## Change this into your game
+The supported Node range, exact TypeScript/Vite/Three.js versions and npm
+version are declared in `package.json`; `.nvmrc` selects the recommended Node.
 
-| Location | Responsibility |
+## Where to work
+
+| Path | Responsibility |
 | --- | --- |
-| `src/core/game.ts` | Pure, deterministic, serializable game state, fixed ticks and commands |
-| `src/core/invariants.ts`, `src/core/prng.ts` | Example state contracts and explicit seeded randomness |
-| `src/data/settings.ts` | Example configuration; move game content to data registries |
-| `src/shared/` (optional) | Portable, side-effect-free utilities used by core |
-| `src/application/start.ts` | **One** simulation/render clock, inputs, resize and lifecycle |
-| `src/presentation/dom/` | Semantic HTML controls and HUD updates |
-| `src/presentation/canvas2d/` | Independent transparent 2D overlay |
-| `src/presentation/three/` | 3D world, camera, raycasting and world-to-screen projection |
-| `tests/` | Headless state tests and real-browser smoke test |
-| `tests/fixtures/replay-golden.json` | Explicit, versioned deterministic replay baseline |
-| `scripts/check-architecture.mjs` | Local architecture/determinism checker (with negative tests) |
+| `src/core/` | Pure game state, commands and seeded RNG |
+| `src/data/` | Content definitions and settings |
+| `src/application/` | Fixed-step clock, input routing and lifecycle |
+| `src/presentation/dom/` | Semantic controls and accessible HUD |
+| `src/presentation/canvas2d/` | Procedural 2D rendering and overlays |
+| `src/presentation/three/` | 3D scene, camera, projection and raycasting |
+| `tests/` | Core and architecture regression tests |
+| `examples/testing/` | **Optional** seeded scenarios, invariants and golden replay |
 
-1. Read [AGENTS.md](AGENTS.md) and the [rendering decision guide](docs/RENDERING_DECISION.md).
-2. Describe your game's actual requirements in [the rendering ADR](docs/decisions/0001-renderer.md).
-3. Remove unused renderers, sample geometry, UI, rules and tests; preserve the
-   separation of state, game clock and input ownership.
-4. Replace `Orbit Range` with your game, iterate on a small vertical slice, and
-   keep `npm run check` and `npm run test:browser` passing locally.
+Read [AGENTS.md](AGENTS.md) and [the rendering decision guide](docs/RENDERING_DECISION.md).
+Describe your game's actual layer ownership in
+[the rendering ADR](docs/decisions/0001-renderer.md), then replace the sample
+geometry, rules, controls and related tests with a small vertical slice.
 
-**DOM-only:** remove both canvas surfaces/modules; keep the coordinator and
-headless core. **Canvas-only:** remove `createWorld`, and replace the sample
-Three.js projection with 2D canvas positions/hit tests. **Three-only:** remove
-`createOverlay`, and keep the DOM for controls. The current sample intentionally
-uses all three to prove their integration, not to mandate them for every game.
+- **DOM-only:** remove both canvases and their renderers; keep semantic UI and
+  headless state as appropriate.
+- **Canvas-only:** remove Three.js and implement 2D positions/hit testing.
+- **Three-only:** remove the Canvas 2D overlay; keep HTML for controls.
+- **Hybrid:** keep distinct surfaces and the shared clock/coordinate contract.
 
-See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) for the short customization checklist,
-[docs/PLATFORM.md](docs/PLATFORM.md) for exact tooling and
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for architectural principles.
-For reproducibility use [replay testing](docs/REPLAY_TESTING.md); for manual
-evidence use the [playtest matrix](docs/PLAYTEST_MATRIX.md).
+`npm run test:examples` exercises the optional replay/invariant examples;
+they are intentionally **not** in the default `npm run check` gate. Adapt
+them to your game's rules if useful. See [replay testing](docs/REPLAY_TESTING.md),
+[architecture](docs/ARCHITECTURE.md) and [local testing](docs/TESTING.md).
 
-Optional pre-commit checks: `./scripts/install-hooks.sh scripts/project-checks.sh`.
-The installer runs `npm run check` first and **never overwrites** an existing
-hook. Browser tests are a separate local command because they require Chromium.
+An optional local pre-commit hook can be installed with
+`./scripts/install-hooks.sh scripts/project-checks.sh`. It will not overwrite
+an existing hook and is never required by GitHub.
 
-**License:** [MIT](LICENSE). No build, deployment, test or release automation is
-configured on GitHub.
+## Existing games
+
+Do not copy this template wholesale over an established game. Opt in to the
+agent rules, renderer decision contract and local checks separately; preserve
+working game-specific architecture. Record the template commit and deliberate
+deviations in the game's own provenance notes.
+
+**License:** [MIT](LICENSE). When creating a game, update the copyright holder
+in `LICENSE` while retaining MIT terms unless you deliberately choose another
+license and update the local validation policy.

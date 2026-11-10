@@ -1,12 +1,12 @@
 # Deterministic replay and generated-state testing
 
-These are **reference patterns**, not generic gameplay rules. Replace the
-sample commands, events, invariants and generators when creating a real game.
-Keep them independent of HTML, Canvas 2D, Three.js and wall-clock time.
+These are **optional reference patterns**, not required game rules. Their
+runnable implementation lives in `examples/testing/`, outside the default
+`npm run check` gate. Adapt or remove them when creating a game.
 
 ## Golden replay contract
 
-`tests/fixtures/replay-golden.json` pins:
+`examples/testing/fixtures/replay-golden.json` pins:
 
 - Schema version and initial seed.
 - Ordered commands assigned to **fixed-step ordinals** (not render frames or
@@ -17,11 +17,11 @@ Keep them independent of HTML, Canvas 2D, Three.js and wall-clock time.
   drift even when no command was issued on the failing step.
 - Total simulated steps and a canonical final-state SHA-256 digest.
 
-`tests/helpers/replay.ts` computes those digests from stable, recursively
+`examples/testing/helpers/replay.ts` computes those digests from stable, recursively
 sorted JSON fields. Node's crypto implementation stays in test code; the
 headless `src/core/` has no Node, browser or renderer dependencies.
 
-`npm test` verifies the golden trace, different rendering cadences, cosmetic
+`npm run test:examples` verifies the golden trace, different rendering cadences, cosmetic
 render reads, a JSON save/restore midpoint and an intentionally changed
 command. Failures report the **first divergent command and step** (or the
 final step if only the final state differs).
@@ -33,10 +33,10 @@ formats, with migration or explicit rejection tests.
 
 ## Invariants and generated scenarios
 
-`src/core/invariants.ts` shows a small `assertGameInvariants` contract.
+`examples/testing/invariants.ts` shows a sample `assertGameInvariants` contract.
 `src/core/prng.ts` provides a stateless seeded xorshift step instead of
-`Math.random`. `tests/helpers/generation.ts` provides a reproducible command
-generator and deletion shrinker. `tests/invariants.test.ts` checks input purity,
+`Math.random`. `examples/testing/helpers/generation.ts` provides a reproducible command
+generator and deletion shrinker. `examples/testing/invariants.test.ts` checks input purity,
 rejected invalid commands, every state transition, JSON round-trips and a
 deliberately injected bug that shrinks to a minimal reproducer.
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revisionReason": "Initial deterministic replay baseline for the hybrid starter",
+  "revisionReason": "Optional sample replay baseline for the hybrid starter",
   "seed": 17,
   "steps": 12,
   "commands": [
