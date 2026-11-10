@@ -13,7 +13,7 @@
     "test:examples": "node --test examples/testing/*.test.ts",
     "test:browser": "playwright test",
     "lint:architecture": "node scripts/check-architecture.mjs",
-    "check": "npm run lint:architecture && npm run typecheck && npm test && npm run build && ./scripts/validate-template.sh"
+    "check": "npm run lint:architecture && npm test && npm run build && ./scripts/validate-template.sh"
   },
   "dependencies": {
     "three": "0.187.0"

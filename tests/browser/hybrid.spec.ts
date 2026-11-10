@@ -35,6 +35,27 @@ async function findCanvasMarker(page: Page) {
   });
 }
 
+async function readWorldPixelAtMarker(page: Page) {
+  const marker = await findCanvasMarker(page);
+  return page.locator('#world').evaluate(async (canvas: HTMLCanvasElement, position) => {
+    const gl = canvas.getContext('webgl2');
+    if (!gl) throw new Error('Three.js did not provide a WebGL2 context');
+    // Read in the same animation frame as the renderer draw. The default
+    // framebuffer is not preserved after composition.
+    return new Promise<number[]>((resolve) => {
+      requestAnimationFrame(() => {
+        const x = Math.max(0, Math.min(gl.drawingBufferWidth - 1,
+          Math.floor(position.x * gl.drawingBufferWidth / canvas.clientWidth)));
+        const y = Math.max(0, Math.min(gl.drawingBufferHeight - 1,
+          Math.floor((canvas.clientHeight - position.y) * gl.drawingBufferHeight / canvas.clientHeight)));
+        const pixel = new Uint8Array(4);
+        gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+        resolve(Array.from(pixel));
+      });
+    });
+  }, marker);
+}
+
 async function expectHybridReady(page: Page) {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Orbit Range' })).toBeVisible();
@@ -60,6 +81,11 @@ test('hybrid_WithProductionBuild_AlignsCanvasAndThreeAndHandlesDesktopResizes', 
   const errors = collectBrowserErrors(page);
   await expectHybridReady(page);
   await expectControlsInViewport(page);
+  // A Canvas 2D marker and a successful raycast alone do not prove WebGL drew.
+  await expect.poll(async () => {
+    const [red = 0, green = 0, , alpha = 0] = await readWorldPixelAtMarker(page);
+    return alpha > 0 && green > 80 && green > red + 20;
+  }, { timeout: 10_000 }).toBe(true);
   await page.keyboard.press('Tab');
   await expect(page.locator('#world')).toBeFocused();
   await expect(page.locator('#world')).not.toHaveCSS('outline-style', 'none');
@@ -92,6 +118,18 @@ test('hybrid_WithProductionBuild_AlignsCanvasAndThreeAndHandlesDesktopResizes', 
     expect({ width: backing.width, height: backing.height }).toEqual(dimensions);
     expect(backing.pixelWidth / backing.width).toBeCloseTo(Math.min(backing.ratio, 2), 1);
   }
+  await page.setViewportSize({ width: 320, height: 280 });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollHeight > innerHeight)).toBe(true);
+  const scoreBox = await page.locator('.score-panel').boundingBox();
+  const controlBox = await page.locator('.controls').boundingBox();
+  expect(scoreBox).not.toBeNull();
+  expect(controlBox).not.toBeNull();
+  expect(scoreBox!.y + scoreBox!.height).toBeLessThan(controlBox!.y);
+  await page.getByRole('button', { name: 'Pause' }).scrollIntoViewIfNeeded();
+  const pauseBox = await page.locator('#pause-button').boundingBox();
+  expect(pauseBox).not.toBeNull();
+  expect(pauseBox!.y).toBeGreaterThanOrEqual(0);
+  expect(pauseBox!.y + pauseBox!.height).toBeLessThanOrEqual(280);
   expect(errors).toEqual([]);
 });
 

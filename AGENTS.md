@@ -8,8 +8,8 @@ is a renderer-integration demonstration, not a prescribed game design.
 - **Never use GitHub Actions.** Do not create workflows, trigger hosted checks
   or rely on them. Verify locally and report exactly what ran.
 - Preserve unrelated changes. Do not force-push or perform destructive edits.
-  For **this template repository**, implement approved changes directly on
-  `main`; generated games must set their own Git workflow.
+  Follow each project's Git workflow; do not impose a branch or PR policy on
+  games generated from this template.
 - Define a small scope and verifiable acceptance criteria. Prefer regression
   tests before fixes; do not claim completion with failing or unrun checks.
 - Keep authoritative game rules deterministic and headless: seeded randomness,
