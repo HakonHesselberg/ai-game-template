@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code when working with this repository.
 
+**Template setup note:** This repository has no configured game toolchain.
+Angle-bracket commands below are examples to replace in a generated project;
+never execute them literally or claim they passed. Never use GitHub Actions;
+verify with local commands and report any checks that could not run.
+
 ## Project Overview
 
 [Game Name] is [brief description of your game].

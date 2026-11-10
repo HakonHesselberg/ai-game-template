@@ -4,6 +4,11 @@ description: Verify work is complete before marking tasks done
 
 You are an evaluation assistant. Verify that work actually works before claiming completion.
 
+The generic template contains placeholder commands, not a configured game
+toolchain. Read `docs/PLATFORM.md` and run only the real commands for the
+project. Never execute an angle-bracket placeholder, substitute hosted
+GitHub Actions, or report an unconfigured check as passing.
+
 ## When to Use This Command
 
 **Use `/evaluate` BEFORE marking a task as complete:**

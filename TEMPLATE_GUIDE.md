@@ -2,6 +2,10 @@
 
 This guide helps you get started with the AI game development template.
 
+The repository is not a runnable game. All angle-bracket command names are
+placeholders until you configure a project-specific toolchain. Run checks
+locally; **GitHub Actions must not be used**.
+
 ## What's Included
 
 ### Core Documentation (for AI Assistants)
@@ -102,10 +106,12 @@ This guide helps you get started with the AI game development template.
 ### Supporting Files
 
 **scripts/install-hooks.sh** - Pre-commit hook installer
-- Type checking
-- Unit tests
-- Common pitfall detection
-- Layer violation detection
+- Optionally runs your own configured local check script before each commit
+- Refuses to overwrite existing hooks or install failing/unconfigured checks
+
+**scripts/validate-template.sh** - Template self-check
+- Verifies license consistency, shell syntax and absence of GitHub Actions
+- Does not claim to test a generated game
 
 **.gitignore** - Comprehensive ignore patterns
 - Python, Node, C#, Rust, Unity, Godot
@@ -140,12 +146,13 @@ Edit `docs/PLATFORM.md` and fill in:
 **Runtime:** .NET 8.0
 ```
 
-Add your build/test commands:
-```bash
-<build-command>  → dotnet build
-<test-command>   → dotnet test
-<run-command>    → dotnet run
-```
+Add your actual build/test/run commands, for example:
+
+| Purpose | Example for a .NET game |
+| --- | --- |
+| Build | `dotnet build` |
+| Test | `dotnet test` |
+| Run | `dotnet run` |
 
 ### 3. Update CLAUDE.md
 
@@ -156,15 +163,33 @@ Replace placeholders:
 - `<test-command>` → Your test command
 - `<run-command>` → Your run command
 
-### 4. Install Pre-commit Hooks
+### 4. Configure Local Verification and Optional Hook
 
-```bash
-./scripts/install-hooks.sh
+Create an executable `scripts/project-checks.sh` containing the checks for
+**your** engine. For a TypeScript project, its contents might be:
+
+```sh
+#!/bin/sh
+set -eu
+npm run typecheck
+npm test
 ```
 
-Edit `.git/hooks/pre-commit` to set:
-- `<type-check-command>` → Your type checker (mypy, tsc, etc.)
-- `<test-command>` → Your test runner (pytest, npm test, etc.)
+Then run:
+
+```bash
+chmod +x scripts/project-checks.sh
+./scripts/project-checks.sh
+./scripts/install-hooks.sh scripts/project-checks.sh
+```
+
+The installer runs the checks once and installs a hook only if they pass and no
+other pre-commit hook is present. If a hook already exists, integrate the
+project checks manually; the installer will not overwrite it. The hook is
+optional, but passing local verification before a commit is not.
+
+To validate the **template itself**, run `./scripts/validate-template.sh`.
+That check does not replace project tests or browser testing.
 
 ### 5. Update .gitignore
 

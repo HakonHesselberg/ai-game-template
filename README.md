@@ -2,6 +2,10 @@
 
 A comprehensive, language/platform-agnostic template for AI-assisted game development projects.
 
+This is a **guidance-only starting point**, not a configured game or a passing
+game test suite. Platform-specific commands must be set up before they are run.
+Development and verification are **local only: do not use GitHub Actions**.
+
 ## Features
 
 - **Test-Driven Development (TDD)** - Red-Green-Refactor workflow with 100% pass rate requirement
@@ -14,17 +18,11 @@ A comprehensive, language/platform-agnostic template for AI-assisted game develo
 
 ## Quick Start
 
-### 1. Clone Template
+### 1. Create a Repository from the Template
 
-```bash
-# Clone this template
-git clone https://github.com/yourusername/ai-game-template.git my-game
-cd my-game
-
-# Remove template git history
-rm -rf .git
-git init
-```
+On [the template repository](https://github.com/HakonHesselberg/ai-game-template),
+use GitHub's **Use this template** button to create a new repository with its
+own history. There is no need to delete a `.git` directory manually.
 
 ### 2. Configure for Your Platform
 
@@ -42,12 +40,20 @@ Edit `CLAUDE.md` and replace placeholders:
 - `[brief description]` - What your game is about
 - `<build-command>`, `<test-command>`, `<run-command>` - Platform-specific commands
 
-### 4. Initialize Git
+### 4. Commit Your Configuration
 
 ```bash
 git add .
 git commit -m "Initial commit from ai-game-template"
 ```
+
+Optional local checks: run `./scripts/validate-template.sh` to check the
+template's license, shell scripts and absence of GitHub Actions. This does
+**not** test your game. After creating an executable
+`scripts/project-checks.sh` containing your real project checks, you can
+install the optional hook with
+`./scripts/install-hooks.sh scripts/project-checks.sh`.
+The installer refuses to overwrite existing hooks or install failing checks.
 
 ### 5. Start Developing
 
@@ -217,6 +223,10 @@ Before committing, check `docs/COMMON_PITFALLS.md` for:
 
 ## Pre-Commit Checklist
 
+The following command names are **examples to configure** in
+`docs/PLATFORM.md`; do not execute the angle-bracket placeholders literally.
+This repository intentionally contains no engine-specific test runner.
+
 ```bash
 # 1. Type checking
 <type-check-command>
@@ -276,7 +286,7 @@ Types:
 
 ## License
 
-[GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
+[MIT](LICENSE)
 
 ## Acknowledgments
 
