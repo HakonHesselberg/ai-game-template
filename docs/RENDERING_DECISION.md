@@ -38,11 +38,18 @@ layer that has no meaningful job.
   coordinates; centralize DPR, camera projection, input mapping and resize.
 - **Explicit input routing:** DOM controls handle UI input. Decorative overlays
   do not intercept pointers. Interactive Canvas overlays use hit testing;
-  Three.js raycasting handles intended world interactions.
+  Three.js raycasting handles intended world interactions. Games that track
+  held pointers must release them on `pointercancel`, `lostpointercapture`,
+  window blur and teardown; handle multiple touch IDs independently.
+- **Mobile fit:** Honor `env(safe-area-inset-*)`, constrained-height scrolling,
+  coarse pointers and zoom. Browser viewport emulation cannot prove notch or
+  gesture behavior on physical devices.
 - **Bounded work:** Draw only what is needed; avoid repeated full-canvas
   texture uploads. Dispose of Three.js resources and listeners.
-- **Lifecycle:** Pause, resize, hidden tabs and WebGL context loss must not
-  desynchronize state, markers or input.
+- **Lifecycle:** Pause, resize, hidden tabs, `pagehide`/`pageshow` (including
+  back-forward cache) and WebGL context loss must not desynchronize state,
+  markers or input. If the game persists state, pause its operation before
+  saving and validate all restored data.
 
 ## Acceptance evidence
 

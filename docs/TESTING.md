@@ -19,6 +19,13 @@ responsive layouts, touch/DPR and WebGL lifecycle where supported. A missing
 browser, failing startup or WebGL error is **not** a pass. Real phones,
 assistive technology and different GPUs need separate evidence in
 [PLAYTEST_MATRIX.md](PLAYTEST_MATRIX.md).
+Playwright retains screenshots and traces for failures in the ignored
+`test-results/` directory when a browser launches; review them locally.
+
+For games with saves, treat decoded storage as untrusted input. Version its
+schema; bound sizes and numbers; reject unsupported formats; test corruption,
+migration, JSON round-trips and back-forward-cache restoration. These checks
+are optional because the starter has no persistence requirement.
 
 Before completion, report the commands actually run, pass/fail counts, manual
 checks, outstanding device checks and known risks. Do not regenerate a replay

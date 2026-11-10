@@ -10,7 +10,7 @@ import { checkArchitecture } from '../scripts/check-architecture.mjs';
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const script = path.join(repo, 'scripts/check-architecture.mjs');
 
-function fixture(t, files, tsconfig) {
+function fixture(t, files, tsconfig, pureLayerAliases) {
   const root = mkdtempSync(path.join(tmpdir(), 'game-architecture-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   for (const [name, content] of Object.entries(files)) {
@@ -19,6 +19,7 @@ function fixture(t, files, tsconfig) {
     writeFileSync(target, content);
   }
   if (tsconfig) writeFileSync(path.join(root, 'tsconfig.json'), JSON.stringify(tsconfig));
+  if (pureLayerAliases) writeFileSync(path.join(root, 'architecture.layers.json'), JSON.stringify({ pureLayerAliases }));
   return root;
 }
 
@@ -126,6 +127,39 @@ test('checkArchitecture_WithCustomFeatureFolder_AcceptsApplicationComposition', 
     'src/application/start.ts': "import { arena } from '../features/arena/arena'; export const start = arena;",
   });
   assert.equal(errors(root), '');
+});
+
+test('checkArchitecture_WithDeclaredPureFolder_ProtectsPurityAndImportDirection', (t) => {
+  const root = fixture(t, {
+    'src/core/game.ts': 'export const state = 1;',
+    'src/physics/step.ts': "import { state } from '../core/game'; import '../presentation/three/world'; export const next = state + Math.random();",
+    'src/presentation/three/world.ts': 'export const world = 1;',
+    'src/features/visual.ts': "import { next } from '../physics/step'; export const x = next;",
+  }, null, { physics: 'core' });
+  assert.match(errors(root), /src\/physics\/step\.ts.*core must not call Math.random/);
+  assert.match(errors(root), /src\/physics\/step\.ts.*core must not import presentation/);
+});
+
+test('checkArchitecture_WithDeclaredPureFolders_AcceptsHeadlessImports', (t) => {
+  const root = fixture(t, {
+    'src/content/values.ts': 'export const count = 3;',
+    'src/core/game.ts': "import { count } from '../content/values'; export const state = count;",
+    'src/physics/step.ts': "import { state } from '../core/game'; export const next = state + 1;",
+    'src/application/start.ts': "import { next } from '../physics/step'; export const start = next;",
+  }, null, { content: 'shared', physics: 'core' });
+  assert.equal(errors(root), '');
+});
+
+test('checkArchitecture_WithDeclaredPureFolder_RejectsRendererImports', (t) => {
+  const root = fixture(t, {
+    'src/physics/step.ts': "import * as THREE from 'three'; export const x = THREE;",
+  }, null, { physics: 'core' });
+  assert.match(errors(root), /src\/physics\/step\.ts.*core must not import renderer\/platform packages/);
+});
+
+test('checkArchitecture_WithInvalidPureFolderAlias_FailsClosed', (t) => {
+  const root = fixture(t, { 'src/core/game.ts': 'export const x = 1;' }, null, { physics: 'application' });
+  assert.throws(() => checkArchitecture(root), /Invalid pure layer alias/);
 });
 
 test('checkArchitecture_WithCoreImportingFeatureOrMissingFile_ReportsBoth', (t) => {

@@ -32,6 +32,25 @@ const prohibitedGlobals = new Set([
 const sourceExtensions = new Set(['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs']);
 const rendererFolders = new Set(['dom', 'canvas2d', 'three']);
 
+function loadPureLayerAliases(root) {
+  const filename = path.join(root, 'architecture.layers.json');
+  if (!existsSync(filename)) return {};
+  const config = JSON.parse(readFileSync(filename, 'utf8'));
+  if (!config || typeof config !== 'object' || Array.isArray(config) ||
+      Object.keys(config).some((key) => key !== 'pureLayerAliases') ||
+      !config.pureLayerAliases || typeof config.pureLayerAliases !== 'object' ||
+      Array.isArray(config.pureLayerAliases)) {
+    throw new Error('architecture.layers.json must contain a pureLayerAliases object');
+  }
+  for (const [directory, layer] of Object.entries(config.pureLayerAliases)) {
+    if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(directory) ||
+        Object.hasOwn(allowedImports, directory) || !pureLayers.has(layer)) {
+      throw new Error(`Invalid pure layer alias in architecture.layers.json: ${directory}`);
+    }
+  }
+  return config.pureLayerAliases;
+}
+
 function within(folder, item) {
   const relative = path.relative(folder, item);
   return relative === '' || (relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
@@ -48,11 +67,12 @@ function listSourceFiles(directory) {
     .sort();
 }
 
-function layerFor(srcRoot, filename) {
+function layerFor(srcRoot, filename, aliases) {
   if (!within(srcRoot, filename)) return null;
   const parts = path.relative(srcRoot, filename).split(path.sep);
   if (parts.length === 1) return 'entry';
-  return Object.hasOwn(allowedImports, parts[0]) ? parts[0] : 'feature';
+  if (Object.hasOwn(allowedImports, parts[0])) return parts[0];
+  return Object.hasOwn(aliases, parts[0]) ? aliases[parts[0]] : 'feature';
 }
 
 function rendererFor(srcRoot, filename) {
@@ -127,6 +147,7 @@ function isNonReferenceName(node, parent, parentKey) {
 export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')) {
   const root = path.resolve(repositoryRoot);
   const srcRoot = path.join(root, 'src');
+  const aliases = loadPureLayerAliases(root);
   const files = listSourceFiles(srcRoot);
   const errors = [];
   if (files.length === 0) errors.push('src/:1:1 no source files found; architecture checks cannot verify an empty project');
@@ -141,7 +162,7 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
   }
 
   for (const filename of files) {
-    const layer = layerFor(srcRoot, filename);
+    const layer = layerFor(srcRoot, filename, aliases);
     const renderer = rendererFor(srcRoot, filename);
     let syntax;
     try {
@@ -158,7 +179,7 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
         const specifier = source.value;
         const resolved = resolveImport(specifier, filename);
         if (resolved && within(srcRoot, resolved)) {
-          const importedLayer = layerFor(srcRoot, resolved);
+          const importedLayer = layerFor(srcRoot, resolved, aliases);
           const importedRenderer = rendererFor(srcRoot, resolved);
           if (!allowedImports[layer]?.has(importedLayer)) {
             report(filename, source, `${layer} must not import ${importedLayer}: ${specifier}`);

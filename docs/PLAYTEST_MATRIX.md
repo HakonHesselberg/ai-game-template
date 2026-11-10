@@ -11,7 +11,9 @@ Automated emulation is **not** equivalent to a real phone, GPU or screen reader.
 | Desktop pointer raycast, marker alignment, pause/reset, keyboard Enter/Space/R | Playwright Chromium smoke | Unverified | Unverified |
 | Phone portrait with touch and DPR 2 backing surfaces | Playwright mobile-context smoke | Unverified | Unverified |
 | Phone landscape, resize, unclipped controls | Playwright viewport smoke | Unverified | Unverified |
+| Safe-area insets, display cutouts and high-zoom scrolling | Viewport smoke covers scrolling only | Unverified | Unverified |
 | Pointer routing (2D overlay does not consume world taps) | Playwright touch/pointer smoke | Unverified | Unverified |
+| Held input releases on cancel, blur and lost pointer capture (if implemented) | Game-specific regression | Not applicable to starter | Unverified |
 | Real WebGL loss and restoration | Playwright, only where extension is supported | Unverified | Unverified |
 | Keyboard-only navigation and visible focus | Playwright focus smoke + manual review | Unverified | Unverified |
 | Reduced-motion preference | Manual assessment of game-relevant vs decorative motion | Unverified | Unverified |

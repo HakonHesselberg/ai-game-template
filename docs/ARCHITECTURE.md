@@ -21,6 +21,20 @@ folders can be introduced deliberately. The local checker protects known
 layer boundaries; review third-party packages for deterministic/browser-free
 behavior instead of treating the checker as a security sandbox.
 
+Unrecognized `src/` folders are treated as **features**, not pure rules. If a
+game introduces a separate deterministic folder, opt it into the existing
+guardrails with an optional `architecture.layers.json` at the repository root:
+
+```json
+{ "pureLayerAliases": { "physics": "core", "content": "shared" } }
+```
+
+This makes `src/physics/` obey core rules and `src/content/` obey shared-helper
+rules (including import direction and forbidden ambient state). Aliases must
+name top-level folders and map to `shared`, `core` or `data`. Ordinary feature
+folders need no declaration. The checker scans `src/`; existing games using
+root-level `core/` must adapt that path when adopting it.
+
 ## Invariants worth preserving
 
 - Core transitions take explicit state and commands and return new state.

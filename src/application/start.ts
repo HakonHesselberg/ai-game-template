@@ -91,6 +91,8 @@ export function startGame() {
   worldCanvas.addEventListener('webglcontextrestored', restoredContext);
   window.addEventListener('keydown', keyDown);
   document.addEventListener('visibilitychange', visibilityChange);
+  window.addEventListener('pagehide', visibilityChange);
+  window.addEventListener('pageshow', visibilityChange);
   resize();
   frameId = requestAnimationFrame(frame);
 
@@ -102,6 +104,8 @@ export function startGame() {
     worldCanvas.removeEventListener('webglcontextrestored', restoredContext);
     window.removeEventListener('keydown', keyDown);
     document.removeEventListener('visibilitychange', visibilityChange);
+    window.removeEventListener('pagehide', visibilityChange);
+    window.removeEventListener('pageshow', visibilityChange);
     hud.dispose();
     world.dispose();
   };

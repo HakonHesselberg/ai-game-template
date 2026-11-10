@@ -14,7 +14,9 @@ is a renderer-integration demonstration, not a prescribed game design.
   tests before fixes; do not claim completion with failing or unrun checks.
 - Keep authoritative game rules deterministic and headless: seeded randomness,
   stable stepping, validated commands, serializable state and no renderer or
-  wall-clock dependency in `src/core/`.
+  wall-clock dependency in `src/core/`. Declare other pure top-level folders
+  in `architecture.layers.json` rather than letting them pass as unrestricted
+  feature folders. See `docs/ARCHITECTURE.md`.
 - Run `npm run check` locally for code changes. It enforces architecture
   boundaries, determinism guardrails, unit tests, types, build and the
   no-Actions template check. Do not bypass an architecture finding without
