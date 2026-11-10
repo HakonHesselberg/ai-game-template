@@ -8,10 +8,11 @@ Follow `AGENTS.md`. For visual changes, check the rendering ADR and verify
 cross-layer alignment, input, resize and lifecycle in a real local browser
 when available. Report browser/device checks that were not run.
 
-The generic template contains placeholder commands, not a configured game
-toolchain. Read `docs/PLATFORM.md` and run only the real commands for the
-project. Never execute an angle-bracket placeholder, substitute hosted
-GitHub Actions, or report an unconfigured check as passing.
+The web starter has configured commands: `npm run check` and
+`npm run test:browser` (Chromium required). Read `docs/PLATFORM.md` and run
+the commands relevant to the generated game. Never execute an angle-bracket
+placeholder, substitute hosted GitHub Actions, or report an unrun check as
+passing.
 
 ## When to Use This Command
 

@@ -1,35 +1,40 @@
-# ADR-0001 — Rendering responsibilities
+# ADR-0001 — Renderer allocation for the starter example
 
-**Status:** Proposed — replace this template when starting a game.
+**Status:** Starter demonstration; replace this decision for each new game.
 
-## Requirements
+## Requirements and choice
 
-- Game concept and main interactions:
-- Target devices, orientations and input methods:
-- Accessibility needs:
+This tiny example has a moving 3D target, a camera-aligned 2D reticle, score
+and pause/reset controls. It must respond to pointer/touch, offer keyboard
+controls, and resize across desktop and mobile viewports.
 
-## Layer ownership
-
-| Layer | What it renders/handles | Why |
+| Layer | Owned responsibilities | Reason |
 | --- | --- | --- |
-| HTML/CSS | | |
-| Canvas 2D | | |
-| Three.js | | |
+| HTML/CSS | Heading, score, status, accessible pause/reset buttons, responsive layout | Semantic UI, focus and screen-reader labels |
+| Three.js | Lit scene, world geometry, camera, target, raycasting, world-to-screen projection | Actual 3D spatial relationship |
+| Canvas 2D | Transparent target ring/marks in screen pixels | Independent dynamic 2D annotation without rebuilding 3D geometry |
 
-If a layer is unnecessary, say why. Both Canvas 2D and Three.js are preferred
-when each has a real responsibility, not just to satisfy a template rule.
+## Integration contract
 
-## Integration
+- Distinct stacked canvases: WebGL below, transparent pointer-pass-through 2D
+  above, DOM controls on top. No double-rendering of the world.
+- `src/core/game.ts` alone decides score, pause, tick and target motion.
+- `src/application/start.ts` owns one `requestAnimationFrame` and fixed-step
+  simulation accumulator; renderers accept state and never create game clocks.
+- The Three.js camera projects target world coordinates to canvas-local CSS
+  pixels; both canvases independently size their device-pixel backing stores.
+- DOM handles its buttons, WebGL canvas handles target pointer raycasts,
+  keyboard Space/R controls pause/reset and focused canvas Enter collects.
+- ResizeObserver updates both surfaces. Hidden tabs discard elapsed simulation
+  time. WebGL loss suspends rendering; restoration resizes again. Dispose
+  removes listeners/resources for HMR.
 
-- Surface stacking, transparency and texture strategy:
-- Shared game state and frame coordinator:
-- World/screen/DPR conversions and camera projection:
-- Pointer, touch and keyboard routing:
-- Resize, pause and resource cleanup:
+## Verification and replacement
 
-## Proof before full implementation
-
-- Hardest representative interaction:
-- Prototype result and local verification performed:
-- Unverified device/manual checks:
-- What would make us reconsider this allocation:
+`tests/browser/hybrid.spec.ts` is the representative integration test:
+detect real Canvas 2D marker pixels, click their projected location in the
+3D canvas, verify score and keyboard/DOM controls, then resize to portrait.
+Run it in Chromium locally along with `npm run check`. The sample is not a
+universal requirement to use all three layers: remove unused layers in a
+game and explain the new allocation in this ADR. Revisit if target alignment,
+input behavior, performance or accessibility differs from requirements.

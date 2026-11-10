@@ -1,0 +1,30 @@
+{
+  "name": "ai-game-template",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A minimal, deterministic hybrid web-game starter",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.ts",
+    "test:browser": "playwright test",
+    "check": "npm run typecheck && npm test && npm run build && ./scripts/validate-template.sh"
+  },
+  "dependencies": {
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "@types/node": "26.6.6",
+    "@types/three": "0.187.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.7"
+  },
+  "engines": {
+    "node": ">=24.15.0 <27"
+  },
+  "packageManager": "npm@12.2.2"
+}

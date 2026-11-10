@@ -2,8 +2,9 @@
 
 Use **HTML/CSS, Canvas 2D and Three.js together when they have different jobs**.
 Do not draw the same scene twice or require an unused layer merely for
-consistency. The planned web starter is TypeScript/Vite; the current template
-contains guidance only.
+consistency. The runnable sample in `src/` uses TypeScript/Vite and all three
+layers to exercise alignment, input and resize, but projects may remove any
+layer that has no meaningful job.
 
 | Responsibility | Preferred tool |
 | --- | --- |

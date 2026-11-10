@@ -1,311 +1,65 @@
-# AI Game Development Template
+# AI Game Template
 
-A comprehensive, language/platform-agnostic template for AI-assisted game development projects.
+An **MIT-licensed, runnable TypeScript/Vite web-game starter** for AI-assisted
+development. The small sample combines **Three.js** (interactive 3D world),
+**Canvas 2D** (camera-aligned targeting marker) and **HTML/CSS** (responsive,
+accessible controls). Use only the layers your actual game needs.
 
-This is a **guidance-only starting point**, not a configured game or a passing
-game test suite. Platform-specific commands must be set up before they are run.
-Development and verification are **local only: do not use GitHub Actions**.
+**No GitHub Actions.** All verification runs locally.
 
-For new web games, start with [AGENTS.md](AGENTS.md) and the
-[rendering decision guide](docs/RENDERING_DECISION.md). The intended v2 web
-stack is TypeScript/Vite with HTML/CSS, Canvas 2D and Three.js used together
-where appropriate; the runnable web starter is a later implementation step.
+## Start
 
-## Features
-
-- **Test-Driven Development (TDD)** - Red-Green-Refactor workflow with 100% pass rate requirement
-- **Data-Driven Design** - Registry pattern for game content
-- **Immutable State Architecture** - Functional transformations for predictable behavior
-- **Headless-First** - Core logic independent of rendering for fast testing
-- **Deterministic Gameplay** - Seeded RNG for reproducible results
-- **Custom Slash Commands** - Workflow-optimized commands for Claude Code
-- **Comprehensive Documentation** - Architecture, testing, systems, and common pitfalls
-
-## Quick Start
-
-### 1. Create a Repository from the Template
-
-On [the template repository](https://github.com/HakonHesselberg/ai-game-template),
-use GitHub's **Use this template** button to create a new repository with its
-own history. There is no need to delete a `.git` directory manually.
-
-### 2. Configure for Your Platform
-
-Edit `docs/PLATFORM.md` and fill in:
-- Engine/Framework (Unity, Godot, Bevy, Pygame, Phaser, etc.)
-- Language (C#, Python, Rust, TypeScript, etc.)
-- Build commands
-- Test commands
-- Dependencies
-
-### 3. Update Project Info
-
-Edit `CLAUDE.md` and replace placeholders:
-- `[Game Name]` - Your game's name
-- `[brief description]` - What your game is about
-- `<build-command>`, `<test-command>`, `<run-command>` - Platform-specific commands
-
-### 4. Commit Your Configuration
+Use GitHub's **Use this template** on
+[ai-game-template](https://github.com/HakonHesselberg/ai-game-template), then:
 
 ```bash
-git add .
-git commit -m "Initial commit from ai-game-template"
+nvm use              # Recommended Node.js 26.13.0 LTS
+npm ci
+npm run dev          # http://127.0.0.1:5173
+npm test             # Headless deterministic game rules
+npm run build        # Strict TypeScript check + Vite production build
+npm run check        # Includes template guard / local hook tests
 ```
 
-Optional local checks: run `./scripts/validate-template.sh` to check the
-template's license, shell scripts and absence of GitHub Actions. This does
-**not** test your game. After creating an executable
-`scripts/project-checks.sh` containing your real project checks, you can
-install the optional hook with
-`./scripts/install-hooks.sh scripts/project-checks.sh`.
-The installer refuses to overwrite existing hooks or install failing checks.
-
-### 5. Start Developing
-
-Use the TDD workflow:
+For a real-browser smoke test, install Chromium through Playwright once and run:
 
 ```bash
-# Plan your first feature
-/plan
-
-# Write tests (RED)
-# Implement feature (GREEN)
-# Refactor (REFACTOR)
-
-# Verify before marking complete
-/evaluate
-
-# Review before committing
-/review
-
-# Commit
-git commit -m "feat: your feature description"
+npx playwright install chromium
+npm run test:browser
 ```
 
-## Project Structure
-
-```
-/core/              # Pure game logic (platform-independent)
-/application/       # Game loop, managers, orchestration
-/presentation/      # UI/rendering layer (optional, platform-specific)
-/data/              # JSON/config files (game content)
-/tests/             # Test suite
-/docs/              # Documentation
-  ARCHITECTURE.md   # System design and patterns
-  TESTING.md        # Test standards
-  GAME_SYSTEMS.md   # Gameplay mechanics
-  PLATFORM.md       # Platform-specific guide
-  COMMON_PITFALLS.md # Frequent mistakes to avoid
-/.claude/
-  commands/         # Custom slash commands
-    plan.md         # Feature planning
-    evaluate.md     # Pre-completion verification
-    review.md       # Pre-commit code review
-    debug.md        # Issue investigation
-    audit.md        # Architecture review
-    refactor.md     # Safe refactoring
-/scripts/           # Utility scripts
-```
-
-## Core Principles
-
-### Test-Driven Development
-
-1. **RED**: Write failing test first
-2. **GREEN**: Write minimal code to pass
-3. **REFACTOR**: Clean up while keeping tests green
-4. **COMMIT**: Only when all tests pass (100% required)
-
-### Data-Driven Design
-
-- All game content in registries
-- Immutable definitions (loaded once, frozen)
-- Mutable instances (per-entity state)
-- Reference by ID for memory efficiency
-
-### Immutable State
-
-- Game state is immutable
-- Functional transformations
-- Structural sharing for performance
-- Enables AI simulation, replay, and debugging
-
-### Deterministic Gameplay
-
-- All randomness through seeded RNG
-- Fixed timestep for game loop
-- Consistent ordering of operations
-- Same input → same output
-
-## Workflow Commands
-
-### `/plan` - Feature Planning
-
-Convert rough ideas into detailed implementation specs with TodoWrite checklist.
-
-```bash
-/plan "Add fire tower with burn damage"
-```
-
-### `/evaluate` - Pre-Completion Verification
-
-Verify work is complete before marking tasks done.
-
-```bash
-/evaluate          # Full evaluation
-/evaluate quick    # Fast check (type + tests)
-```
-
-### `/review` - Pre-Commit Code Review
-
-Review changes against project standards before committing.
-
-```bash
-/review
-```
-
-### `/debug` - Issue Investigation
-
-Systematic Q&A-based root cause analysis.
-
-```bash
-/debug
-```
-
-### `/audit` - Architecture Review
-
-Review code for compliance with project patterns.
-
-```bash
-/audit core/components/
-```
-
-### `/refactor` - Safe Refactoring
-
-Execute refactoring with before/after test validation.
-
-```bash
-/refactor
-```
-
-## Documentation
-
-### For AI Assistants
-
-- **CLAUDE.md** - Main guidance file (read by Claude Code automatically)
-- **docs/ARCHITECTURE.md** - System design, patterns, naming conventions
-- **docs/COMMON_PITFALLS.md** - Frequent mistakes and how to avoid them
-
-### For Developers
-
-- **README.md** - This file (project overview)
-- **docs/TESTING.md** - Test standards and TDD workflow
-- **docs/GAME_SYSTEMS.md** - Gameplay mechanics and formulas
-- **docs/PLATFORM.md** - Platform-specific setup and build instructions
-
-## Critical Work Standards
-
-**NEVER claim work is complete without verification:**
-
-- ❌ Don't say "complete" if tests are failing
-- ❌ Don't pretend problems are solved
-- ✅ Actually run the code and verify it works
-- ✅ Be honest if something needs more work
-
-See CLAUDE.md for full work standards.
-
-## Common Pitfalls
-
-Before committing, check `docs/COMMON_PITFALLS.md` for:
-
-- Hard-coded magic numbers
-- Missing type hints/annotations
-- Missing imports
-- Null/None handling
-- Layer violations
-- Breaking immutability
-- Non-deterministic operations
-
-## Pre-Commit Checklist
-
-The following command names are **examples to configure** in
-`docs/PLATFORM.md`; do not execute the angle-bracket placeholders literally.
-This repository intentionally contains no engine-specific test runner.
-
-```bash
-# 1. Type checking
-<type-check-command>
-
-# 2. Run tests
-<test-command>
-
-# 3. Review changes
-/review
-
-# 4. Commit if all pass
-git commit -m "type: description"
-```
-
-## Commit Message Convention
-
-```
-type: brief description
-
-Types:
-- feat: New feature
-- fix: Bug fix
-- refactor: Code restructuring
-- test: Adding tests
-- docs: Documentation
-- chore: Maintenance
-```
-
-## Contributing
-
-1. Use `/plan` to plan changes
-2. Follow TDD workflow
-3. Use `/evaluate` before marking complete
-4. Use `/review` before committing
-5. Keep all tests passing (100%)
-6. Update documentation as needed
-
-## Customization
-
-### Adding Platform-Specific Patterns
-
-1. Update `docs/PLATFORM.md` with platform details
-2. Add platform-specific patterns to `docs/ARCHITECTURE.md`
-3. Update `CLAUDE.md` with platform-specific commands
-
-### Adding New Slash Commands
-
-1. Create `.claude/commands/yourcommand.md`
-2. Add description frontmatter
-3. Document in README.md
-
-### Extending Documentation
-
-- `docs/GAME_SYSTEMS.md` - Add game-specific systems
-- `docs/COMMON_PITFALLS.md` - Add discovered pitfalls
-- `docs/ARCHITECTURE.md` - Document architectural decisions
-
-## License
-
-[MIT](LICENSE)
-
-## Acknowledgments
-
-This template is based on lessons learned from:
-- Chess-Extreme (Unity/C# game project)
-- Shardstone (Python roguelike tower defense)
-- Industry best practices for AI-assisted development (2025)
-
-## Resources
-
-- [Claude Code Documentation](https://docs.anthropic.com/claude/docs)
-- [Test-Driven Development Guide](https://martinfowler.com/bliki/TestDrivenDevelopment.html)
-- [Game Programming Patterns](https://gameprogrammingpatterns.com/)
-
----
-
-**Ready to start?** Edit `docs/PLATFORM.md` and `CLAUDE.md`, then use `/plan` to plan your first feature!
+If Chromium is already installed elsewhere, set `CHROMIUM_PATH=/path/to/chromium`
+for `npm run test:browser` instead. The test checks real Canvas 2D drawing,
+Three.js raycast interaction, DOM controls and portrait resize.
+
+## Change this into your game
+
+| Location | Responsibility |
+| --- | --- |
+| `src/core/game.ts` | Pure, deterministic, serializable game state, fixed ticks and commands |
+| `src/data/settings.ts` | Example configuration; move game content to data registries |
+| `src/application/start.ts` | **One** simulation/render clock, inputs, resize and lifecycle |
+| `src/presentation/dom/` | Semantic HTML controls and HUD updates |
+| `src/presentation/canvas2d/` | Independent transparent 2D overlay |
+| `src/presentation/three/` | 3D world, camera, raycasting and world-to-screen projection |
+| `tests/` | Headless state tests and real-browser smoke test |
+
+1. Read [AGENTS.md](AGENTS.md) and the [rendering decision guide](docs/RENDERING_DECISION.md).
+2. Describe your game's actual requirements in [the rendering ADR](docs/decisions/0001-renderer.md).
+3. Remove unused renderers, sample geometry, UI, rules and tests; preserve the
+   separation of state, game clock and input ownership.
+4. Replace `Orbit Range` with your game, iterate on a small vertical slice, and
+   keep `npm run check` and `npm run test:browser` passing locally.
+
+**DOM-only:** remove both canvas surfaces/modules; keep the coordinator and
+headless core. **Canvas-only:** remove `createWorld`, and replace the sample
+Three.js projection with 2D canvas positions/hit tests. **Three-only:** remove
+`createOverlay`, and keep the DOM for controls. The current sample intentionally
+uses all three to prove their integration, not to mandate them for every game.
+
+See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) for the short customization checklist,
+[docs/PLATFORM.md](docs/PLATFORM.md) for exact tooling and
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for architectural principles.
+
+**License:** [MIT](LICENSE). No build, deployment, test or release automation is
+configured on GitHub.

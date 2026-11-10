@@ -1,5 +1,14 @@
 # Testing Standards
 
+## Web starter checks
+
+`npm test` runs deterministic headless core tests; `npm run typecheck` checks
+strict TypeScript; `npm run build` creates the Vite bundle; `npm run check`
+also runs the local template guard. `npm run test:browser` uses real Chromium
+for Three.js raycasting, Canvas 2D drawing, DOM controls and responsive resize.
+Run browser tests after changing presentation, input or camera behavior.
+**Never use GitHub Actions.** See [PLATFORM.md](PLATFORM.md).
+
 ## Test Naming Convention
 
 All tests MUST follow: `Method_Condition_Behavior`
@@ -573,7 +582,7 @@ tests, integration tests and build locally. Run browser or device checks
 locally when the change affects player-visible behavior. Report which checks
 ran, their results, and which checks could not be performed.
 
-The generic template has no configured game test runner. The self-check
+The starter has unit, type, build and browser checks. The self-check
 `./scripts/validate-template.sh` checks only template setup and consistency.
 For an optional pre-commit hook, configure an executable
 `scripts/project-checks.sh` with your real commands, then run

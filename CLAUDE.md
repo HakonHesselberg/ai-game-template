@@ -8,9 +8,10 @@ Before implementing game visuals, read
 project's [rendering ADR](docs/decisions/0001-renderer.md). Canvas 2D and
 Three.js may be used together when they have distinct responsibilities.
 
-This repository is currently a **guidance template**, not a runnable game.
-Replace the platform examples in [docs/PLATFORM.md](docs/PLATFORM.md) with
-actual commands before running project verification. Do not use GitHub Actions.
+This repository is a **runnable hybrid web-game starter** with local commands
+in [docs/PLATFORM.md](docs/PLATFORM.md). Run `npm run check` and the Chromium
+`npm run test:browser` smoke test for changes to visuals or interactions.
+Do not use GitHub Actions.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md),
 [docs/TESTING.md](docs/TESTING.md), and

@@ -1,5 +1,7 @@
-# Platform-specific ignores
-# Uncomment and add to these sections based on your platform
+# Web starter ignores (other platform examples remain below)
+test-results/
+playwright-report/
+.playwright/
 
 # ===== Python =====
 # __pycache__/
@@ -13,7 +15,7 @@
 # *.egg-info/
 
 # ===== Node/JavaScript =====
-# node_modules/
+node_modules/
 # dist/
 # build/
 # .next/

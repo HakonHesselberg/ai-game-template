@@ -1,7 +1,7 @@
 # Agent instructions — AI Game Template
 
-This repository is a **guidance-only template** migrating toward a TypeScript
-web-game starter. Do not claim that a game, build or test runner already exists.
+This repository is a **runnable TypeScript/Vite web-game starter**. Its sample
+is a renderer-integration demonstration, not a prescribed game design.
 
 ## Non-negotiable
 
@@ -14,7 +14,7 @@ web-game starter. Do not claim that a game, build or test runner already exists.
   tests before fixes; do not claim completion with failing or unrun checks.
 - Keep authoritative game rules deterministic and headless: seeded randomness,
   stable stepping, validated commands, serializable state and no renderer or
-  wall-clock dependency in `core/`.
+  wall-clock dependency in `src/core/`.
 
 ## Web presentation
 
@@ -36,8 +36,9 @@ why a layer has no role.
 
 ## Work and handoff
 
-Read only relevant architecture/platform/testing docs. Replace placeholder
-commands with actual local commands for the generated project. Before finishing,
+Read only relevant architecture/platform/testing docs. Local commands are
+`npm ci`, `npm run dev`, `npm test`, `npm run build`, `npm run check` and
+`npm run test:browser` (Chromium required). Before finishing,
 report changed paths, checks actually executed, browser/device checks not run,
 risks and the next action. Do not change licensing or add dependencies without
 a concrete need and the owner's authorization.

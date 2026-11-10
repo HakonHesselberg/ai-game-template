@@ -38,4 +38,4 @@ fi
 sh tests/test-hook-installer.sh
 
 printf '%s\n' 'Template validation passed (license, local scripts and no GitHub Actions).'
-printf '%s\n' 'This does not test a generated game; configure and run its own local checks.'
+printf '%s\n' 'Run npm test, npm run build, and npm run test:browser separately for game verification.'
