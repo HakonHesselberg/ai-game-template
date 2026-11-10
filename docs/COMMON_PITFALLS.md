@@ -2,6 +2,15 @@
 
 Based on project history, these issues appear repeatedly. **Check before committing:**
 
+## Local architecture guard
+
+Run `npm run lint:architecture` (also part of `npm run check`) after changing
+imports or core logic. It catches circular dependencies, reverse layer imports,
+direct dependencies between DOM/Canvas 2D/Three.js renderers, and ambient
+random/time/browser access in pure code. Add an isolated negative test when a
+new architectural regression is discovered; do not suppress the check to make
+the build green. See [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## 1. Hard-Coded Values / Magic Numbers ⚠️ CRITICAL
 
 **Problem:** Numeric literals scattered throughout code make it hard to maintain and understand intent.

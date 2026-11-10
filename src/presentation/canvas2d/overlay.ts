@@ -1,4 +1,4 @@
-import type { ScreenPoint } from '../three/world';
+import type { ScreenPoint } from '../coordinates';
 import { settings } from '../../data/settings';
 
 export function createOverlay(canvas: HTMLCanvasElement) {

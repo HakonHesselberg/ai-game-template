@@ -18,7 +18,7 @@ npm ci
 npm run dev          # http://127.0.0.1:5173
 npm test             # Headless deterministic game rules
 npm run build        # Strict TypeScript check + Vite production build
-npm run check        # Includes template guard / local hook tests
+npm run check        # Architecture + types + tests + build + template guard
 ```
 
 For a real-browser smoke test, install Chromium through Playwright once and run:
@@ -38,11 +38,13 @@ Three.js raycast interaction, DOM controls and portrait resize.
 | --- | --- |
 | `src/core/game.ts` | Pure, deterministic, serializable game state, fixed ticks and commands |
 | `src/data/settings.ts` | Example configuration; move game content to data registries |
+| `src/shared/` (optional) | Portable, side-effect-free utilities used by core |
 | `src/application/start.ts` | **One** simulation/render clock, inputs, resize and lifecycle |
 | `src/presentation/dom/` | Semantic HTML controls and HUD updates |
 | `src/presentation/canvas2d/` | Independent transparent 2D overlay |
 | `src/presentation/three/` | 3D world, camera, raycasting and world-to-screen projection |
 | `tests/` | Headless state tests and real-browser smoke test |
+| `scripts/check-architecture.mjs` | Local architecture/determinism checker (with negative tests) |
 
 1. Read [AGENTS.md](AGENTS.md) and the [rendering decision guide](docs/RENDERING_DECISION.md).
 2. Describe your game's actual requirements in [the rendering ADR](docs/decisions/0001-renderer.md).
@@ -60,6 +62,10 @@ uses all three to prove their integration, not to mandate them for every game.
 See [TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md) for the short customization checklist,
 [docs/PLATFORM.md](docs/PLATFORM.md) for exact tooling and
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for architectural principles.
+
+Optional pre-commit checks: `./scripts/install-hooks.sh scripts/project-checks.sh`.
+The installer runs `npm run check` first and **never overwrites** an existing
+hook. Browser tests are a separate local command because they require Chromium.
 
 **License:** [MIT](LICENSE). No build, deployment, test or release automation is
 configured on GitHub.

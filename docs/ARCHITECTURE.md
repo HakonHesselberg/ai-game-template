@@ -5,6 +5,30 @@ integration contract live in [RENDERING_DECISION.md](RENDERING_DECISION.md).
 Use [the per-game ADR](decisions/0001-renderer.md) to record what each layer
 owns before implementation.
 
+## Enforced source boundaries
+
+`npm run lint:architecture` checks actual `src/` imports using a syntax parser
+and TypeScript alias resolution. It rejects dependency cycles, reverse imports,
+cross-renderer module coupling and nondeterministic or external dependencies
+in the pure layers. `npm test` includes known-bad examples proving it fails.
+
+| Source layer | May import from |
+| --- | --- |
+| `shared/` | `shared/` only; portable, pure helpers |
+| `core/` | `core/`, `shared/` |
+| `data/` | `data/`, `core/`, `shared/` |
+| `presentation/` | `presentation/`, `data/`, `core/`, `shared/` |
+| `application/` | All listed layers; owns clock, input routing and composition |
+| Root `src/main.ts` | Composition entry point; may import all layers |
+
+`presentation/dom/`, `presentation/canvas2d/` and `presentation/three/`
+must not import one another directly: put shared interfaces in
+`presentation/` (see `coordinates.ts`). The pure layers (`core/`, `data/`,
+`shared/`) cannot access browser globals, time, unseeded randomness,
+external packages or an implicit environment. This is a conservative
+default; intentionally modify the policy for different game requirements,
+with regression tests and an updated ADR.
+
 ## Overview
 
 [Game Name] uses [architecture pattern] with [key design principles].
@@ -85,10 +109,13 @@ game.rng.random()
 ```
 
 **Critical Rules:**
-- Dependencies flow downward only
-- Core has ZERO dependencies on Application or Presentation
-- Presentation cannot be imported by Core or Application
-- Use events/callbacks to communicate upward
+- Dependencies follow the enforced layer table above; Application intentionally
+  composes Presentation, rather than depending on a diagram's vertical order
+- Core cannot depend on Application or Presentation
+- Data cannot depend on Application or Presentation
+- Application may import Presentation to compose renderers and controls;
+  Presentation may not import Application or own authoritative game state
+- Use explicit commands/events or callbacks for user actions into Application
 
 ### 4. Data-Driven Design
 

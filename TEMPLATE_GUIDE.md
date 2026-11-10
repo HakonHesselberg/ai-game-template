@@ -14,9 +14,16 @@ and **never GitHub Actions**. Check [AGENTS.md](AGENTS.md) before coding.
 4. Run `npm ci`, `npm run dev`, `npm test`, `npm run build`,
    `npm run test:browser` and `./scripts/validate-template.sh` locally.
    [Platform setup](docs/PLATFORM.md) explains Node and Chromium.
-5. Optionally use `./scripts/install-hooks.sh scripts/project-checks.sh` after
-   configuring an executable local checks script. The installer will not
-   overwrite existing hooks. Do not create `.github/workflows`.
+5. Optionally run `./scripts/install-hooks.sh scripts/project-checks.sh` to
+   install the included `npm run check` pre-commit wrapper. For a generated
+   game, update that wrapper when local checks change. The installer will
+   not overwrite existing hooks. Do not create `.github/workflows`.
+
+The architecture checker in `scripts/check-architecture.mjs` disallows reverse
+layer dependencies, direct renderer-to-renderer imports, import cycles, external
+packages and nondeterministic globals in the pure layers. Update its documented
+policy if your game genuinely needs a different dependency structure; keep its
+negative regression tests.
 
 The `/plan`, `/evaluate`, `/review`, `/debug`, `/audit` and `/refactor` commands
 in `.claude/commands/` remain optional workflow aids. Consult

@@ -30,7 +30,10 @@ fi
 
 sh -n scripts/install-hooks.sh
 sh -n scripts/validate-template.sh
+sh -n scripts/project-checks.sh
 sh -n tests/test-hook-installer.sh
+[ -x scripts/project-checks.sh ] ||
+    fail 'The optional local project-checks hook script must be executable.'
 if grep -En '<[[:alnum:]_-]+-command>' scripts/*.sh >/dev/null; then
     fail 'An executable script contains an unresolved command placeholder.'
 fi

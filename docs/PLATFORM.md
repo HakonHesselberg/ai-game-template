@@ -15,10 +15,11 @@ nvm use
 npm ci
 npm run dev           # Live dev server: http://127.0.0.1:5173
 npm run typecheck     # TypeScript, no JS emission
+npm run lint:architecture  # Boundary and determinism checker
 npm test              # Headless pure-core tests
 npm run build         # Typecheck plus static dist/ build
 npm run preview       # Preview build: http://127.0.0.1:4173
-npm run check         # Typecheck, unit tests, build, template guard
+npm run check         # Architecture, typecheck, tests, build, template guard
 npx playwright install chromium
 npm run test:browser  # Real Chromium, DOM/2D/WebGL interaction + resize
 ```

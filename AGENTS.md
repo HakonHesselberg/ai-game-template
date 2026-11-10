@@ -15,6 +15,11 @@ is a renderer-integration demonstration, not a prescribed game design.
 - Keep authoritative game rules deterministic and headless: seeded randomness,
   stable stepping, validated commands, serializable state and no renderer or
   wall-clock dependency in `src/core/`.
+- Run `npm run check` locally for code changes. It enforces architecture
+  boundaries, determinism guardrails, unit tests, types, build and the
+  no-Actions template check. Do not bypass an architecture finding without
+  recording and deliberately updating the policy in
+  `scripts/check-architecture.mjs`.
 
 ## Web presentation
 
@@ -37,7 +42,7 @@ why a layer has no role.
 ## Work and handoff
 
 Read only relevant architecture/platform/testing docs. Local commands are
-`npm ci`, `npm run dev`, `npm test`, `npm run build`, `npm run check` and
+`npm ci`, `npm run dev`, `npm run lint:architecture`, `npm test`, `npm run build`, `npm run check` and
 `npm run test:browser` (Chromium required). Before finishing,
 report changed paths, checks actually executed, browser/device checks not run,
 risks and the next action. Do not change licensing or add dependencies without

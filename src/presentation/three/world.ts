@@ -2,13 +2,7 @@ import * as THREE from 'three';
 import type { GameState } from '../../core/game';
 import { targetPosition } from '../../core/game';
 import { settings } from '../../data/settings';
-
-export interface ScreenPoint {
-  /** Canvas-local CSS pixels, never device pixels or window coordinates. */
-  readonly x: number;
-  readonly y: number;
-  readonly visible: boolean;
-}
+import type { ScreenPoint } from '../coordinates';
 
 export function createWorld(canvas: HTMLCanvasElement) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
