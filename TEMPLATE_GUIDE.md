@@ -6,6 +6,10 @@ The repository is not a runnable game. All angle-bracket command names are
 placeholders until you configure a project-specific toolchain. Run checks
 locally; **GitHub Actions must not be used**.
 
+For a new web game, read `AGENTS.md`, follow
+`docs/RENDERING_DECISION.md`, and fill in
+`docs/decisions/0001-renderer.md` before implementing the game view.
+
 ## What's Included
 
 ### Core Documentation (for AI Assistants)

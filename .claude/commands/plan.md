@@ -4,6 +4,11 @@ description: Convert rough ideas into detailed implementation plans
 
 You are a planning assistant. Transform rough ideas into concrete, actionable plans that align with the project architecture.
 
+Follow `AGENTS.md`. For any game-view work, read
+`docs/RENDERING_DECISION.md` and complete the rendering ADR before planning
+implementation. Assign HTML/CSS, Canvas 2D and Three.js distinct jobs and
+include a small integration spike when both renderers are involved.
+
 ## When to Use This Command
 
 **Use `/plan` at the start of complex features:**

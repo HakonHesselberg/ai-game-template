@@ -6,6 +6,11 @@ This is a **guidance-only starting point**, not a configured game or a passing
 game test suite. Platform-specific commands must be set up before they are run.
 Development and verification are **local only: do not use GitHub Actions**.
 
+For new web games, start with [AGENTS.md](AGENTS.md) and the
+[rendering decision guide](docs/RENDERING_DECISION.md). The intended v2 web
+stack is TypeScript/Vite with HTML/CSS, Canvas 2D and Three.js used together
+where appropriate; the runnable web starter is a later implementation step.
+
 ## Features
 
 - **Test-Driven Development (TDD)** - Red-Green-Refactor workflow with 100% pass rate requirement

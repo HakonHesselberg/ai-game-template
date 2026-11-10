@@ -16,6 +16,9 @@ grep -q 'Copyright (c) 2025 HakonHesselberg' LICENSE ||
     fail 'LICENSE must contain a real copyright holder.'
 grep -q 'MIT' README.md && grep -q 'MIT' TEMPLATE_GUIDE.md ||
     fail 'README and TEMPLATE_GUIDE must agree with LICENSE.'
+[ -f AGENTS.md ] && [ -f docs/RENDERING_DECISION.md ] &&
+    [ -f docs/decisions/0001-renderer.md ] ||
+    fail 'Agent and rendering decision documentation is missing.'
 if grep -Ei 'GPL-3\.0|GPLv3' README.md TEMPLATE_GUIDE.md >/dev/null; then
     fail 'Conflicting GPL licensing statements remain in setup documentation.'
 fi

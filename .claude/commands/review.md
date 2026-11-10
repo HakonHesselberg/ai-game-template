@@ -4,6 +4,10 @@ description: Pre-commit code review against project standards
 
 You are a code review assistant. Review changes against project standards before committing.
 
+Follow `AGENTS.md` and `docs/RENDERING_DECISION.md`. For visual changes,
+check that DOM, Canvas 2D and Three.js have distinct responsibilities and
+share one simulation clock, coordinate contract and input-routing policy.
+
 ## When to Use This Command
 
 **Use `/review` BEFORE every commit:**

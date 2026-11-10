@@ -1,5 +1,10 @@
 # Architecture
 
+For web games, the renderer responsibilities and Canvas 2D + Three.js
+integration contract live in [RENDERING_DECISION.md](RENDERING_DECISION.md).
+Use [the per-game ADR](decisions/0001-renderer.md) to record what each layer
+owns before implementation.
+
 ## Overview
 
 [Game Name] uses [architecture pattern] with [key design principles].
