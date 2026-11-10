@@ -32,8 +32,10 @@ controls, and resize across desktop and mobile viewports.
 ## Verification and replacement
 
 `tests/browser/hybrid.spec.ts` is the representative integration test:
-detect real Canvas 2D marker pixels, click their projected location in the
-3D canvas, verify score and keyboard/DOM controls, then resize to portrait.
+build and load the production bundle, detect real Canvas 2D marker pixels,
+click/tap their projected location in the 3D canvas, verify score and keyboard/DOM
+controls, then resize through portrait and landscape and test WebGL context
+loss/restoration where supported.
 Run it in Chromium locally along with `npm run check`. The sample is not a
 universal requirement to use all three layers: remove unused layers in a
 game and explain the new allocation in this ADR. Revisit if target alignment,

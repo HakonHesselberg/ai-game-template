@@ -20,6 +20,12 @@ is a renderer-integration demonstration, not a prescribed game design.
   no-Actions template check. Do not bypass an architecture finding without
   recording and deliberately updating the policy in
   `scripts/check-architecture.mjs`.
+- Preserve deterministic replay and state-invariant coverage when changing
+  game rules. Revise golden baselines only with an explicit reason; a changed
+  digest alone is not proof of correctness. See `docs/REPLAY_TESTING.md`.
+- Run `npm run test:browser` for renderer, input and layout changes and record
+  actual browser/device observations in `docs/PLAYTEST_MATRIX.md`. Never
+  describe a simulated viewport as a real device or an unrun check as passing.
 
 ## Web presentation
 

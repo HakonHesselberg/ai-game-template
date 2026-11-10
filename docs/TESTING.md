@@ -2,14 +2,17 @@
 
 ## Web starter checks
 
-`npm test` runs deterministic headless core tests and negative architecture
+`npm test` runs deterministic headless core tests, versioned golden replay,
+seeded invariant/property examples and negative architecture
 fixtures; `npm run lint:architecture` enforces boundaries on real source files;
 `npm run typecheck` checks strict TypeScript; `npm run build` creates the Vite
 bundle; `npm run check` combines these with the template guard.
-`npm run test:browser` uses real Chromium
-for Three.js raycasting, Canvas 2D drawing, DOM controls and responsive resize.
+`npm run test:browser` builds a production preview and uses real Chromium
+for Three.js raycasting, Canvas 2D drawing, DOM controls, high-DPR touch and
+portrait/landscape resize, plus WebGL context recovery when supported.
 Run browser tests after changing presentation, input or camera behavior.
-**Never use GitHub Actions.** See [PLATFORM.md](PLATFORM.md).
+**Never use GitHub Actions.** See [PLATFORM.md](PLATFORM.md),
+[REPLAY_TESTING.md](REPLAY_TESTING.md) and [PLAYTEST_MATRIX.md](PLAYTEST_MATRIX.md).
 
 ## Test Naming Convention
 

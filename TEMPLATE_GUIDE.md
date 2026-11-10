@@ -11,6 +11,8 @@ and **never GitHub Actions**. Check [AGENTS.md](AGENTS.md) before coding.
    they have distinct jobs.
 3. Keep `src/core/` deterministic and DOM-free; replace the sample `Orbit Range`
    rules, data, geometry, overlay and UI with the game's own small vertical slice.
+   Adapt the invariant checks, seeded command generator and versioned golden
+   replay in `tests/` to those new rules; do not blindly regenerate the baseline.
 4. Run `npm ci`, `npm run dev`, `npm test`, `npm run build`,
    `npm run test:browser` and `./scripts/validate-template.sh` locally.
    [Platform setup](docs/PLATFORM.md) explains Node and Chromium.
@@ -24,6 +26,11 @@ layer dependencies, direct renderer-to-renderer imports, import cycles, external
 packages and nondeterministic globals in the pure layers. Update its documented
 policy if your game genuinely needs a different dependency structure; keep its
 negative regression tests.
+
+Use [REPLAY_TESTING.md](docs/REPLAY_TESTING.md) and the
+[PLAYTEST_MATRIX.md](docs/PLAYTEST_MATRIX.md) to distinguish headless,
+browser-emulated and real-device verification. Browser tests run against a
+locally built production preview, not against GitHub Actions.
 
 The `/plan`, `/evaluate`, `/review`, `/debug`, `/audit` and `/refactor` commands
 in `.claude/commands/` remain optional workflow aids. Consult

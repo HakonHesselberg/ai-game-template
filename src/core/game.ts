@@ -12,6 +12,14 @@ export type GameCommand =
   | { readonly type: 'toggle-pause' }
   | { readonly type: 'reset' };
 
+/** Parse commands at the input boundary; TypeScript types do not validate JSON. */
+export function isGameCommand(value: unknown): value is GameCommand {
+  if (value === null || typeof value !== 'object') return false;
+  const fields = value as Record<string, unknown>;
+  return Object.keys(fields).length === 1 &&
+    (fields.type === 'collect' || fields.type === 'toggle-pause' || fields.type === 'reset');
+}
+
 export interface Point3 {
   readonly x: number;
   readonly y: number;
@@ -30,6 +38,8 @@ export function stepGame(state: GameState): GameState {
 }
 
 export function applyCommand(state: GameState, command: GameCommand): GameState {
+  // Reject malformed/untrusted input without altering authoritative state.
+  if (!isGameCommand(command)) return state;
   switch (command.type) {
     case 'collect':
       return state.paused ? state : { ...state, score: state.score + 1, targetIndex: state.targetIndex + 1 };

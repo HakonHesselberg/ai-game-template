@@ -21,7 +21,7 @@ npm run build         # Typecheck plus static dist/ build
 npm run preview       # Preview build: http://127.0.0.1:4173
 npm run check         # Architecture, typecheck, tests, build, template guard
 npx playwright install chromium
-npm run test:browser  # Real Chromium, DOM/2D/WebGL interaction + resize
+npm run test:browser  # Builds production bundle, then tests Chromium 3D/2D/UI, touch and resize
 ```
 
 If you have system Chromium, use `CHROMIUM_PATH=/usr/bin/chromium npm run
@@ -32,6 +32,10 @@ Everything runs **locally**. Do not use GitHub Actions, hosted CI, or
 implicit deployment. `scripts/validate-template.sh` checks MIT licensing,
 prohibited workflows and local hook installation; it does not replace
 the game tests.
+
+Use [REPLAY_TESTING.md](REPLAY_TESTING.md) for golden replay and seeded
+invariants. Keep [PLAYTEST_MATRIX.md](PLAYTEST_MATRIX.md) honest about which
+browser, device and assistive-technology checks actually ran.
 
 The `src/` subdirectories separate pure rules, config, clock/input orchestration,
 and DOM, Canvas 2D and Three.js ownership. Change them for the game's needs,

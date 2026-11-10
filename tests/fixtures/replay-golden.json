@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "revisionReason": "Initial deterministic replay baseline for the hybrid starter",
+  "seed": 17,
+  "steps": 12,
+  "commands": [
+    { "atStep": 0, "command": { "type": "collect" } },
+    { "atStep": 2, "command": { "type": "toggle-pause" } },
+    { "atStep": 3, "command": { "type": "collect" } },
+    { "atStep": 5, "command": { "type": "toggle-pause" } },
+    { "atStep": 6, "command": { "type": "collect" } },
+    { "atStep": 8, "command": { "type": "reset" } },
+    { "atStep": 9, "command": { "type": "collect" } },
+    { "atStep": 11, "command": { "type": "collect" } }
+  ],
+  "records": [
+    {
+      "step": 0,
+      "commandIndex": 0,
+      "command": { "type": "collect" },
+      "accepted": true,
+      "events": [{ "type": "collected", "score": 1 }],
+      "stateDigest": "968807ac5149c15365cd579aebb113fd958eaf2cfcc23cf3f70dce37ab0be7bf"
+    },
+    {
+      "step": 2,
+      "commandIndex": 1,
+      "command": { "type": "toggle-pause" },
+      "accepted": true,
+      "events": [{ "type": "pause-changed", "paused": true }],
+      "stateDigest": "306d82c3961ddff7bc59a4e380ee4807d2c9bf7d49532a4e9149c954493a94f9"
+    },
+    {
+      "step": 3,
+      "commandIndex": 2,
+      "command": { "type": "collect" },
+      "accepted": false,
+      "events": [{ "type": "rejected", "reason": "paused" }],
+      "stateDigest": "306d82c3961ddff7bc59a4e380ee4807d2c9bf7d49532a4e9149c954493a94f9"
+    },
+    {
+      "step": 5,
+      "commandIndex": 3,
+      "command": { "type": "toggle-pause" },
+      "accepted": true,
+      "events": [{ "type": "pause-changed", "paused": false }],
+      "stateDigest": "29b178b7c0709fc33f36aa037736d8ea4b41cfa123b7602e1e3d7d82ce8ecfa9"
+    },
+    {
+      "step": 6,
+      "commandIndex": 4,
+      "command": { "type": "collect" },
+      "accepted": true,
+      "events": [{ "type": "collected", "score": 2 }],
+      "stateDigest": "080647f5f1de88b02d0e6f9ee9abc731267ae866fcca133716e7e0ee5b31054b"
+    },
+    {
+      "step": 8,
+      "commandIndex": 5,
+      "command": { "type": "reset" },
+      "accepted": true,
+      "events": [{ "type": "reset", "seed": 17 }],
+      "stateDigest": "0208c92c1d0ec02504d396a5de4e32cb1b89e8c1193c6dc1551337f779fe7ed5"
+    },
+    {
+      "step": 9,
+      "commandIndex": 6,
+      "command": { "type": "collect" },
+      "accepted": true,
+      "events": [{ "type": "collected", "score": 1 }],
+      "stateDigest": "257956db85401cea7dee975ebb4292c039cca4ff728913d310ad388801ae6966"
+    },
+    {
+      "step": 11,
+      "commandIndex": 7,
+      "command": { "type": "collect" },
+      "accepted": true,
+      "events": [{ "type": "collected", "score": 2 }],
+      "stateDigest": "080647f5f1de88b02d0e6f9ee9abc731267ae866fcca133716e7e0ee5b31054b"
+    }
+  ],
+  "stepDigests": [
+    { "step": 0, "stateDigest": "257956db85401cea7dee975ebb4292c039cca4ff728913d310ad388801ae6966" },
+    { "step": 1, "stateDigest": "29b178b7c0709fc33f36aa037736d8ea4b41cfa123b7602e1e3d7d82ce8ecfa9" },
+    { "step": 2, "stateDigest": "306d82c3961ddff7bc59a4e380ee4807d2c9bf7d49532a4e9149c954493a94f9" },
+    { "step": 3, "stateDigest": "306d82c3961ddff7bc59a4e380ee4807d2c9bf7d49532a4e9149c954493a94f9" },
+    { "step": 4, "stateDigest": "306d82c3961ddff7bc59a4e380ee4807d2c9bf7d49532a4e9149c954493a94f9" },
+    { "step": 5, "stateDigest": "8615627d8c16747ab9443731c9dd8b7d343adc3bdc6d1f3e060e8e847ba959a2" },
+    { "step": 6, "stateDigest": "a6c84660d681dee57e9d5f7b64ae1e69096f9658804fb6fc217b3a162be15853" },
+    { "step": 7, "stateDigest": "eff6ba7c275252523b2d6c73b5bd2382584188175ee3d73c3e86bb8e325252b3" },
+    { "step": 8, "stateDigest": "930451da619f90e032789121ee7be83d43482267173972ab7e95454c292c074b" },
+    { "step": 9, "stateDigest": "29b178b7c0709fc33f36aa037736d8ea4b41cfa123b7602e1e3d7d82ce8ecfa9" },
+    { "step": 10, "stateDigest": "8615627d8c16747ab9443731c9dd8b7d343adc3bdc6d1f3e060e8e847ba959a2" },
+    { "step": 11, "stateDigest": "a6c84660d681dee57e9d5f7b64ae1e69096f9658804fb6fc217b3a162be15853" }
+  ],
+  "finalStateDigest": "a6c84660d681dee57e9d5f7b64ae1e69096f9658804fb6fc217b3a162be15853"
+}
