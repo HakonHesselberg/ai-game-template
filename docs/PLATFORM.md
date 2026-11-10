@@ -1,6 +1,10 @@
 # Platform-Specific Guide
 
-> **Note:** This is a template. Fill in the details specific to your platform/engine when starting a new project.
+> **Note:** This is a template, not an installed toolchain. Fill in the details
+> specific to your platform/engine when starting a new project. Angle-bracket
+> commands such as `<test-command>` are documentation placeholders, not
+> executable commands. Do not run them literally. Verification is local only;
+> do not use GitHub Actions.
 
 ## Platform Information
 

@@ -563,28 +563,21 @@ def test_update_1000_entities_within_16ms():
 - ❌ UI rendering code (not critical)
 - ❌ Trivial getters/setters (low value)
 
-## CI/CD Integration
+## Local Verification Only
 
-Automated testing in CI:
+**Do not use GitHub Actions.** Do not add workflow files, trigger hosted jobs,
+or rely on remote status checks as proof that a change works.
 
-```yaml
-# Example: GitHub Actions
-name: Tests
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup environment
-        run: <setup-command>
-      - name: Run type checking
-        run: <type-check-command>
-      - name: Run unit tests
-        run: <test-command>
-      - name: Upload coverage
-        run: <coverage-upload-command>
-```
+Every generated game must configure and run its actual type checking, unit
+tests, integration tests and build locally. Run browser or device checks
+locally when the change affects player-visible behavior. Report which checks
+ran, their results, and which checks could not be performed.
+
+The generic template has no configured game test runner. The self-check
+`./scripts/validate-template.sh` checks only template setup and consistency.
+For an optional pre-commit hook, configure an executable
+`scripts/project-checks.sh` with your real commands, then run
+`./scripts/install-hooks.sh scripts/project-checks.sh`.
 
 ---
 
