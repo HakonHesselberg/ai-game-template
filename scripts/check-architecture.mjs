@@ -215,6 +215,13 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
            (node.property.type === 'StringLiteral' && node.property.value === 'random'))) {
         report(filename, node, `${layer} must not call Math.random; use seeded state instead`);
       }
+      if (node.type === 'VariableDeclarator' && node.init?.type === 'Identifier' && node.init.name === 'Math' &&
+          node.id.type === 'ObjectPattern' && node.id.properties.some((property) =>
+            property.type === 'ObjectProperty' &&
+            ((property.key.type === 'Identifier' && property.key.name === 'random' && !property.computed) ||
+             (property.key.type === 'StringLiteral' && property.key.value === 'random')))) {
+        report(filename, node, `${layer} must not destructure Math.random; use seeded state instead`);
+      }
       if (node.type === 'MetaProperty' && node.meta.name === 'import' && node.property.name === 'meta') {
         report(filename, node, `${layer} must not use import.meta`);
       }

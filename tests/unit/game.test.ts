@@ -31,5 +31,8 @@ test('applyCommand_WhenReset_RestoresInitialSeedAndScore', () => {
 
 test('createGame_WithInvalidSeed_ThrowsRangeError', () => {
   assert.throws(() => createGame(-1), RangeError);
+  assert.throws(() => createGame(0), RangeError);
+  assert.throws(() => createGame(2 ** 32), RangeError);
   assert.throws(() => createGame(Number.NaN), RangeError);
+  assert.equal(createGame(0xffff_ffff).seed, 0xffff_ffff);
 });

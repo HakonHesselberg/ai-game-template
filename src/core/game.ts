@@ -27,8 +27,8 @@ export interface Point3 {
 }
 
 export function createGame(seed = 1): GameState {
-  if (!Number.isSafeInteger(seed) || seed < 0) {
-    throw new RangeError('Seed must be a non-negative safe integer');
+  if (!Number.isInteger(seed) || seed < 1 || seed > 0xffff_ffff) {
+    throw new RangeError('Seed must be a nonzero unsigned 32-bit integer');
   }
   return { tick: 0, score: 0, paused: false, seed, targetIndex: 0 };
 }

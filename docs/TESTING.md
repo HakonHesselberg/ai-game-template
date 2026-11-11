@@ -18,7 +18,7 @@ fixtures to prove forbidden imports and nondeterministic calls are detected.
 golden digests and shrinking; adapt or remove those game-specific examples.
 
 Browser tests validate visible DOM, Canvas 2D and Three.js interaction,
-responsive layouts, touch/DPR and WebGL lifecycle where supported. A missing
+responsive layouts, live DPR changes, touch and WebGL lifecycle where supported. A missing
 browser, failing startup or WebGL error is **not** a pass. Real phones,
 assistive technology and different GPUs need separate evidence in
 [PLAYTEST_MATRIX.md](PLAYTEST_MATRIX.md).

@@ -36,6 +36,15 @@ export function startGame() {
     overlay.resize(width, height);
   }
 
+  // ResizeObserver tracks CSS dimensions, not changes between monitor DPRs.
+  let resolutionQuery: MediaQueryList | undefined;
+  function resolutionChange() {
+    resolutionQuery?.removeEventListener('change', resolutionChange);
+    resolutionQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+    resolutionQuery.addEventListener('change', resolutionChange);
+    resize();
+  }
+
   function pointerDown(event: PointerEvent) {
     if (!state.paused && !contextLost && world.hitTarget(event.clientX, event.clientY)) {
       state = applyCommand(state, { type: 'collect' });
@@ -96,10 +105,12 @@ export function startGame() {
   function dispose() {
     cancelAnimationFrame(frameId);
     observer?.disconnect();
+    resolutionQuery?.removeEventListener('change', resolutionChange);
     worldCanvas!.removeEventListener('pointerdown', pointerDown);
     worldCanvas!.removeEventListener('webglcontextlost', lostContext);
     worldCanvas!.removeEventListener('webglcontextrestored', restoredContext);
     window.removeEventListener('keydown', keyDown);
+    window.removeEventListener('resize', resolutionChange);
     document.removeEventListener('visibilitychange', visibilityChange);
     window.removeEventListener('pagehide', visibilityChange);
     window.removeEventListener('pageshow', visibilityChange);
@@ -114,10 +125,11 @@ export function startGame() {
     worldCanvas.addEventListener('webglcontextlost', lostContext);
     worldCanvas.addEventListener('webglcontextrestored', restoredContext);
     window.addEventListener('keydown', keyDown);
+    window.addEventListener('resize', resolutionChange);
     document.addEventListener('visibilitychange', visibilityChange);
     window.addEventListener('pagehide', visibilityChange);
     window.addEventListener('pageshow', visibilityChange);
-    resize();
+    resolutionChange();
     frameId = requestAnimationFrame(frame);
   } catch (error) {
     dispose();

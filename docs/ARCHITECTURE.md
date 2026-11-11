@@ -22,6 +22,8 @@ layer boundaries; review third-party packages for deterministic/browser-free
 behavior instead of treating the checker as a security sandbox.
 Pure layers must not import stylesheets or reference browser-only DOM/WebGL
 types, even in type annotations.
+Use seeded randomness directly; destructuring `Math.random` is forbidden, but
+the checker is not a complete alias/data-flow analyzer.
 
 Unrecognized `src/` folders are treated as **features**, not pure rules. If a
 game introduces a separate deterministic folder, opt it into the existing

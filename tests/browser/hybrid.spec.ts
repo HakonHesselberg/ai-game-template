@@ -179,6 +179,24 @@ test('hybrid_WithTouchAndHighDpr_RoutesTapThroughOverlayToThree', async ({ brows
   }
 });
 
+test('hybrid_WhenDprChangesWithoutCssResize_UpdatesBothCanvasBackings', async ({ page }) => {
+  await expectHybridReady(page);
+  const viewport = page.viewportSize()!;
+  const session = await page.context().newCDPSession(page);
+  try {
+    await session.send('Emulation.setDeviceMetricsOverride', {
+      width: viewport.width, height: viewport.height, deviceScaleFactor: 2, mobile: false,
+    });
+    await expect.poll(() => page.locator('#overlay').evaluate((canvas: HTMLCanvasElement) =>
+      canvas.width / canvas.clientWidth)).toBeCloseTo(2, 1);
+    await expect.poll(() => page.locator('#world').evaluate((canvas: HTMLCanvasElement) =>
+      canvas.width / canvas.clientWidth)).toBeCloseTo(2, 1);
+  } finally {
+    await session.send('Emulation.clearDeviceMetricsOverride');
+    await session.detach();
+  }
+});
+
 test('hybrid_WithRealWebglContextLoss_ReportsLossAndRecovers', async ({ page }) => {
   const errors = collectBrowserErrors(page);
   await expectHybridReady(page);
@@ -195,5 +213,9 @@ test('hybrid_WithRealWebglContextLoss_ReportsLossAndRecovers', async ({ page }) 
   await page.evaluate(() => (window as Window & { restoreWebglForTest?: () => void }).restoreWebglForTest?.());
   await expect(page.locator('#status')).not.toContainText('Graphics context lost');
   await expect.poll(async () => (await findCanvasMarker(page)).found, { timeout: 10_000 }).toBeGreaterThan(10);
+  await expect.poll(async () => {
+    const [red = 0, green = 0, , alpha = 0] = await readWorldPixelAtMarker(page);
+    return alpha > 0 && green > 80 && green > red + 20;
+  }).toBe(true);
   expect(errors).toEqual([]);
 });

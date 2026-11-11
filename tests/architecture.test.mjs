@@ -73,6 +73,13 @@ test('checkArchitecture_WithCoreAmbientState_RejectsRandomTimeAndBrowserGlobals'
   assert.match(result, /setTimeout/);
 });
 
+test('checkArchitecture_WithDestructuredRandom_RejectsRenamedAndUnrenamedAccess', (t) => {
+  const root = fixture(t, {
+    'src/core/dice.ts': 'const { random } = Math; const { "random": roll } = Math; export const dice = [random(), roll()];',
+  });
+  assert.equal(errors(root).match(/must not destructure Math\.random/g)?.length, 2);
+});
+
 test('checkArchitecture_WithRendererDependency_RejectsPureLayerImports', (t) => {
   const root = fixture(t, { 'src/core/game.ts': "import * as THREE from 'three'; import fs from 'fs'; export const x = [THREE, fs];" });
   assert.match(errors(root), /core must not import renderer\/platform packages: three/);

@@ -35,7 +35,9 @@ formats, with migration or explicit rejection tests.
 
 `examples/testing/invariants.ts` shows a sample `assertGameInvariants` contract.
 `src/core/prng.ts` provides a stateless seeded xorshift step instead of
-`Math.random`. `examples/testing/helpers/generation.ts` provides a reproducible command
+`Math.random`. Seeds are nonzero unsigned 32-bit integers (`1` through
+`0xffffffff`); zero and larger numbers are rejected to avoid 32-bit aliasing.
+`examples/testing/helpers/generation.ts` provides a reproducible command
 generator and deletion shrinker. `examples/testing/invariants.test.ts` checks input purity,
 rejected invalid commands, every state transition, JSON round-trips and a
 deliberately injected bug that shrinks to a minimal reproducer.
