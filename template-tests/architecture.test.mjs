@@ -1,3 +1,4 @@
+// Self-tests for the template's architecture checker, not for generated games.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';

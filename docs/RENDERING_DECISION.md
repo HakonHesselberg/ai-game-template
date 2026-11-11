@@ -39,6 +39,8 @@ layer that has no meaningful job.
   Three.js raycasting handles intended world interactions. Games that track
   held pointers must release them on `pointercancel`, `lostpointercapture`,
   window blur and teardown; handle multiple touch IDs independently.
+- **Modal UI:** When opening a dialog, prevent background scrolling and game
+  shortcuts; restore the previous scroll behavior and keyboard focus on close.
 - **Mobile fit:** Honor `env(safe-area-inset-*)`, constrained-height scrolling,
   coarse pointers and zoom. Browser viewport emulation cannot prove notch or
   gesture behavior on physical devices.

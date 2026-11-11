@@ -10,13 +10,14 @@
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "test": "node --test \"tests/**/*.test.{ts,js,mjs,cjs,mts,cts}\"",
+    "test:template": "node --test template-tests/*.test.mjs",
     "test:examples": "npm run typecheck:examples && node --test examples/testing/*.test.ts",
     "typecheck:examples": "tsc --noEmit -p tsconfig.examples.json",
     "test:browser": "playwright test",
     "lint:architecture": "node scripts/check-architecture.mjs",
     "check:no-actions": "node scripts/check-no-actions.mjs",
     "check": "npm run check:no-actions && npm run lint:architecture && npm test && npm run build",
-    "check:template": "npm run check && ./scripts/validate-template.sh"
+    "check:template": "npm run check && npm run test:template && ./scripts/validate-template.sh"
   },
   "dependencies": {
     "three": "0.187.0"

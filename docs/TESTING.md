@@ -5,15 +5,15 @@ All tests run **locally**. Never add or depend on GitHub Actions.
 ```bash
 npm ci
 npm run check             # Architecture, core tests, types, build, no Actions
-npm run check:template    # Template maintainers only: MIT/docs/local hook checks
+npm run check:template    # Template only: checker self-tests, MIT/docs/hooks
 npm run test:examples     # Optional sample replay / invariant tests
 npm run test:browser      # Production preview + Playwright Chromium smoke tests
 ```
 
-`npm run check` is the default fast gate. It includes negative architecture
-fixtures to prove forbidden imports and nondeterministic calls are detected,
-plus a mandatory no-GitHub-Actions check. Template-only license and hook
-requirements do not apply to generated games.
+`npm run check` is the default fast gate. It checks the actual game's
+architecture and enforces the no-GitHub-Actions policy. The 27
+architecture-checker regression tests live in `template-tests/` and run only with
+`npm run check:template`, alongside template-only license and hook checks.
 `npm test` discovers unit tests recursively under `tests/` with `.test.ts`,
 `.test.js` or supported Node module extensions; keep Playwright tests as
 `.spec.ts` under `tests/browser/` so they run only in `test:browser`.
@@ -40,7 +40,8 @@ missing one and silently overwrite it.
 
 When a game adds a modal, help screen or overlay, adapt the optional input
 isolation example in `tests/browser/hybrid.spec.ts`: focused controls must not
-trigger world shortcuts, and closing a dialog must restore game input.
+trigger world shortcuts, and closing a dialog must restore focus and game input
+without leaving the background scroll-locked.
 
 For small tasks, a concise check summary is enough. Expand browser/device
 evidence for substantial changes and playtest milestones. Do not regenerate

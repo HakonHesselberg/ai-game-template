@@ -45,7 +45,8 @@ Exact TypeScript/Vite/Three.js versions and npm version are in `package.json`.
 | `src/presentation/dom/` | Semantic controls and accessible HUD |
 | `src/presentation/canvas2d/` | Procedural 2D rendering and overlays |
 | `src/presentation/three/` | 3D scene, camera, projection and raycasting |
-| `tests/` | Core and architecture regression tests |
+| `tests/` | Game and no-GitHub-Actions regression tests |
+| `template-tests/` | Template-maintainer architecture-checker self-tests |
 | `examples/testing/` | **Optional** seeded scenarios, invariants and golden replay |
 
 Read [AGENTS.md](AGENTS.md) and [the rendering decision guide](docs/RENDERING_DECISION.md).
@@ -65,9 +66,10 @@ they are intentionally **not** in the default `npm run check` gate. Adapt
 them to your game's rules if useful. See [replay testing](docs/REPLAY_TESTING.md),
 [architecture](docs/ARCHITECTURE.md) and [local testing](docs/TESTING.md).
 
-`npm run check:template` adds MIT attribution, documentation and local-hook
-validation for maintainers of **this template**. Generated games only need
-`npm run check`; adapt the sample tests and checks as their game evolves.
+`npm run check:template` adds architecture-checker self-tests, MIT attribution,
+documentation and local-hook validation for maintainers of **this template**.
+Generated games only need `npm run check`; adapt the sample tests and checks
+as their game evolves.
 
 An optional local pre-commit hook can be installed with
 `./scripts/install-hooks.sh scripts/project-checks.sh`. It will not overwrite
