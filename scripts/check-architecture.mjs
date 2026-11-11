@@ -36,23 +36,29 @@ const styleImport = /\.(?:css|scss|sass|less)(?:\?.*)?$/i;
 const sourceExtensions = new Set(['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs']);
 const rendererFolders = new Set(['dom', 'canvas2d', 'three']);
 
-function loadPureLayerAliases(root) {
+function loadArchitectureConfig(root) {
+  const defaults = { sourceRoot: 'src', dataDependency: 'data-to-core', pureLayerAliases: {} };
   const filename = path.join(root, 'architecture.layers.json');
-  if (!existsSync(filename)) return {};
+  if (!existsSync(filename)) return defaults;
   const config = JSON.parse(readFileSync(filename, 'utf8'));
   if (!config || typeof config !== 'object' || Array.isArray(config) ||
-      Object.keys(config).some((key) => key !== 'pureLayerAliases') ||
-      !config.pureLayerAliases || typeof config.pureLayerAliases !== 'object' ||
-      Array.isArray(config.pureLayerAliases)) {
-    throw new Error('architecture.layers.json must contain a pureLayerAliases object');
+      Object.keys(config).some((key) => !Object.hasOwn(defaults, key))) {
+    throw new Error('architecture.layers.json contains unsupported configuration');
   }
-  for (const [directory, layer] of Object.entries(config.pureLayerAliases)) {
+  const settings = { ...defaults, ...config };
+  if (!['src', '.'].includes(settings.sourceRoot) ||
+      !['data-to-core', 'core-to-data'].includes(settings.dataDependency) ||
+      !settings.pureLayerAliases || typeof settings.pureLayerAliases !== 'object' ||
+      Array.isArray(settings.pureLayerAliases)) {
+    throw new Error('Invalid sourceRoot, dataDependency or pureLayerAliases in architecture.layers.json');
+  }
+  for (const [directory, layer] of Object.entries(settings.pureLayerAliases)) {
     if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(directory) ||
         Object.hasOwn(allowedImports, directory) || !pureLayers.has(layer)) {
       throw new Error(`Invalid pure layer alias in architecture.layers.json: ${directory}`);
     }
   }
-  return config.pureLayerAliases;
+  return settings;
 }
 
 function within(folder, item) {
@@ -69,6 +75,22 @@ function listSourceFiles(directory) {
       return item.isFile() && sourceExtensions.has(path.extname(item.name)) && !/\.d\.[cm]?ts$/.test(item.name) ? [fullPath] : [];
     })
     .sort();
+}
+
+// A root-level layout is opt-in; never scan dependencies, tests, build output
+// or private tool directories as game source.
+const rootNonSourceFolders = new Set([
+  'node_modules', 'tests', 'scripts', 'docs', 'examples', 'public', 'assets',
+  'dist', 'build', 'coverage', 'artifacts', 'fixtures', 'test-results', 'playwright-report',
+]);
+function listRootSourceFiles(root) {
+  return readdirSync(root, { withFileTypes: true }).flatMap((item) => {
+    if (item.name.startsWith('.') || rootNonSourceFolders.has(item.name)) return [];
+    const entry = path.join(root, item.name);
+    if (item.isDirectory()) return listSourceFiles(entry);
+    return item.isFile() && sourceExtensions.has(path.extname(item.name)) &&
+      !/\.d\.[cm]?ts$/.test(item.name) ? [entry] : [];
+  }).sort();
 }
 
 function layerFor(srcRoot, filename, aliases) {
@@ -152,11 +174,12 @@ function isNonReferenceName(node, parent, parentKey) {
 
 export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')) {
   const root = path.resolve(repositoryRoot);
-  const srcRoot = path.join(root, 'src');
-  const aliases = loadPureLayerAliases(root);
-  const files = listSourceFiles(srcRoot);
+  const config = loadArchitectureConfig(root);
+  const srcRoot = path.resolve(root, config.sourceRoot);
+  const aliases = config.pureLayerAliases;
+  const files = config.sourceRoot === '.' ? listRootSourceFiles(root) : listSourceFiles(srcRoot);
   const errors = [];
-  if (files.length === 0) errors.push('src/:1:1 no source files found; architecture checks cannot verify an empty project');
+  if (files.length === 0) errors.push(`${config.sourceRoot}/:1:1 no source files found; architecture checks cannot verify an empty project`);
   let importsCount = 0;
   const graph = new Map(files.map((file) => [file, new Set()]));
   const resolveImport = resolverFor(root);
@@ -190,7 +213,12 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
         if (resolved && within(srcRoot, resolved)) {
           const importedLayer = layerFor(srcRoot, resolved, aliases);
           const importedRenderer = rendererFor(srcRoot, resolved);
-          if (!allowedImports[layer]?.has(importedLayer)) {
+          const permitted = layer === 'core' && importedLayer === 'data'
+            ? config.dataDependency === 'core-to-data'
+            : layer === 'data' && importedLayer === 'core'
+              ? config.dataDependency === 'data-to-core'
+              : allowedImports[layer]?.has(importedLayer);
+          if (!permitted) {
             report(filename, source, `${layer} must not import ${importedLayer}: ${specifier}`);
           }
           if (renderer && importedRenderer && renderer !== importedRenderer) {
@@ -199,7 +227,7 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
           if (graph.has(resolved)) graph.get(filename).add(resolved);
         } else if (specifier.startsWith('.')) {
           const target = path.resolve(path.dirname(filename), specifier);
-          if (!within(srcRoot, target)) report(filename, source, `relative import leaves src/: ${specifier}`);
+          if (!within(srcRoot, target)) report(filename, source, `relative import leaves ${config.sourceRoot}/: ${specifier}`);
           else if (!resolved) report(filename, source, `unresolved relative import: ${specifier}`);
         } else if (pureLayers.has(layer) && (platformPackages.test(specifier) || nodeBuiltins.has(specifier.split('/')[0]))) {
           report(filename, source, `${layer} must not import renderer/platform packages: ${specifier}`);

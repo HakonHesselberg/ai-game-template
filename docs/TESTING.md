@@ -28,7 +28,13 @@ Playwright retains screenshots and traces for failures in the ignored
 For games with saves, treat decoded storage as untrusted input. Version its
 schema; bound sizes and numbers; reject unsupported formats; test corruption,
 migration, JSON round-trips and back-forward-cache restoration. These checks
-are optional because the starter has no persistence requirement.
+are optional because the starter has no persistence requirement. The runnable
+`examples/testing/persistence.test.ts` demonstrates read-only validation and
+avoiding in-memory state commits when a storage write fails.
+
+When a game adds a modal, help screen or overlay, adapt the optional input
+isolation example in `tests/browser/hybrid.spec.ts`: focused controls must not
+trigger world shortcuts, and closing a dialog must restore game input.
 
 Before completion, report the commands actually run, pass/fail counts, manual
 checks, outstanding device checks and known risks. Do not regenerate a replay

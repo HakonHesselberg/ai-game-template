@@ -197,6 +197,36 @@ test('hybrid_WhenDprChangesWithoutCssResize_UpdatesBothCanvasBackings', async ({
   }
 });
 
+// Adapt this example when a game introduces real menus, dialogs or overlays.
+test('hybrid_WithModalControls_DoesNotRouteUiKeysIntoGame', async ({ page }) => {
+  await expectHybridReady(page);
+  await page.locator('#world').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#score')).toHaveText('1');
+
+  await page.evaluate(() => {
+    const dialog = document.createElement('dialog');
+    dialog.id = 'help-dialog';
+    dialog.innerHTML = '<form method="dialog"><input aria-label="Notes"><button>Close help</button></form>';
+    document.body.append(dialog);
+    dialog.showModal();
+  });
+  await page.getByRole('textbox', { name: 'Notes' }).focus();
+  await page.keyboard.press('r');
+  await page.keyboard.press('Space');
+  await expect(page.locator('#score')).toHaveText('1');
+  // A modal makes background buttons inert, so inspect the HUD text directly.
+  await expect(page.locator('#pause-button')).toHaveText('Pause');
+
+  await page.getByRole('button', { name: 'Close help' }).focus();
+  await page.keyboard.press('Space');
+  await expect(page.locator('#help-dialog')).not.toBeVisible();
+  await expect(page.locator('#pause-button')).toHaveText('Pause');
+  await page.locator('#world').focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('button', { name: 'Resume' })).toBeVisible();
+});
+
 test('hybrid_WithRealWebglContextLoss_ReportsLossAndRecovers', async ({ page }) => {
   const errors = collectBrowserErrors(page);
   await expectHybridReady(page);

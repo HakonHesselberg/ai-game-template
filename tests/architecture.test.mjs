@@ -10,7 +10,7 @@ import { checkArchitecture } from '../scripts/check-architecture.mjs';
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const script = path.join(repo, 'scripts/check-architecture.mjs');
 
-function fixture(t, files, tsconfig, pureLayerAliases) {
+function fixture(t, files, tsconfig, pureLayerAliases, architectureOptions = {}) {
   const root = mkdtempSync(path.join(tmpdir(), 'game-architecture-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   for (const [name, content] of Object.entries(files)) {
@@ -19,7 +19,11 @@ function fixture(t, files, tsconfig, pureLayerAliases) {
     writeFileSync(target, content);
   }
   if (tsconfig) writeFileSync(path.join(root, 'tsconfig.json'), JSON.stringify(tsconfig));
-  if (pureLayerAliases) writeFileSync(path.join(root, 'architecture.layers.json'), JSON.stringify({ pureLayerAliases }));
+  if (pureLayerAliases || Object.keys(architectureOptions).length) {
+    writeFileSync(path.join(root, 'architecture.layers.json'), JSON.stringify({
+      ...(pureLayerAliases ? { pureLayerAliases } : {}), ...architectureOptions,
+    }));
+  }
   return root;
 }
 
@@ -41,6 +45,43 @@ test('checkArchitecture_WithValidLayerGraph_AcceptsImportsAndBrowserCodeInApplic
     'src/main.ts': "import { start } from './application/start'; start();",
   });
   assert.equal(errors(root), '');
+});
+
+test('checkArchitecture_WithCoreToDataPolicy_AcceptsDefinitionsButRejectsReverseDependency', (t) => {
+  const root = fixture(t, {
+    'src/core/rules.ts': "import { value } from '../data/values'; export const outcome = value;",
+    'src/data/values.ts': 'export const value = 7;',
+  }, null, null, { dataDependency: 'core-to-data' });
+  assert.equal(errors(root), '');
+  assert.match(errors(fixture(t, {
+    'src/core/rules.ts': 'export const outcome = 7;',
+    'src/data/values.ts': "import { outcome } from '../core/rules'; export const value = outcome;",
+  }, null, null, { dataDependency: 'core-to-data' })), /data must not import core/);
+});
+
+test('checkArchitecture_WithDefaultDataPolicy_StillRejectsCoreImportingData', (t) => {
+  const root = fixture(t, {
+    'src/core/rules.ts': "import { value } from '../data/values'; export const outcome = value;",
+    'src/data/values.ts': 'export const value = 7;',
+  });
+  assert.match(errors(root), /core must not import data/);
+});
+
+test('checkArchitecture_WithRootLevelLayout_ProtectsCoreAndSkipsTestsAndDependencies', (t) => {
+  const root = fixture(t, {
+    'core/rules.ts': "import { value } from '../data/values'; export const outcome = value + Math.random();",
+    'data/values.ts': 'export const value = 7;',
+    'tests/legacy.test.js': 'const ignored = Math.random();',
+    'node_modules/demo/index.js': 'const ignored = Math.random();',
+  }, null, null, { sourceRoot: '.', dataDependency: 'core-to-data' });
+  assert.match(errors(root), /core\/rules\.ts.*core must not call Math\.random/);
+  assert.equal(checkArchitecture(root).filesCount, 2);
+});
+
+test('checkArchitecture_WithInvalidSourceRootOrDependencyPolicy_FailsClosed', (t) => {
+  const files = { 'src/core/a.ts': 'export const a = 1;' };
+  assert.throws(() => checkArchitecture(fixture(t, files, null, null, { sourceRoot: '../' })), /Invalid sourceRoot/);
+  assert.throws(() => checkArchitecture(fixture(t, files, null, null, { dataDependency: 'both' })), /Invalid sourceRoot/);
 });
 
 test('checkArchitecture_WithBackwardImport_RejectsCoreAndDataDependencies', (t) => {

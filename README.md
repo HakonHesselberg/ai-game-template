@@ -73,6 +73,7 @@ agent rules, renderer decision contract and local checks separately; preserve
 working game-specific architecture. Record the template commit and deliberate
 deviations in the game's own provenance notes.
 
-**License:** [MIT](LICENSE). When creating a game, update the copyright holder
-in `LICENSE` while retaining MIT terms unless you deliberately choose another
-license and update the local validation policy.
+**License:** [MIT](LICENSE). When creating a game, preserve the template's
+original copyright and permission notice for copied code. You may add your
+own copyright notice and choose a different license for your original game
+code; document the choice and adapt the local license validation accordingly.

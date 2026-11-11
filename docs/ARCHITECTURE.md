@@ -36,8 +36,22 @@ guardrails with an optional `architecture.layers.json` at the repository root:
 This makes `src/physics/` obey core rules and `src/content/` obey shared-helper
 rules (including import direction and forbidden ambient state). Aliases must
 name top-level folders and map to `shared`, `core` or `data`. Ordinary feature
-folders need no declaration. The checker scans `src/`; existing games using
-root-level `core/` must adapt that path when adopting it.
+folders need no declaration.
+
+The default dependency direction is `data → core` (data can import core types;
+core cannot import data), and the checker scans `src/`. For a game whose pure
+definitions are independent and imported by core rules, or whose source files
+live at the repository root, opt in explicitly:
+
+```json
+{ "dataDependency": "core-to-data", "sourceRoot": "." }
+```
+
+Both configurations prohibit circular imports and keep browser/rendering APIs
+out of pure layers. `sourceRoot` accepts only `src` or `.`; the root layout
+excludes tests, dependencies, scripts and generated assets from source checks.
+`pureLayerAliases` can be combined with either option. Never enable both
+directions between core and data.
 
 ## Invariants worth preserving
 
