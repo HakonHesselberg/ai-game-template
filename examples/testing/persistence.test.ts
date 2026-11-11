@@ -24,13 +24,23 @@ test('loadVersionedState_WithValidSnapshot_RoundTripsValidatedState', () => {
     (state) => applyCommand(state, { type: 'collect' }), storage, 'save');
   assert.equal(original.score, 0);
   assert.equal(updated.score, 1);
-  assert.deepEqual(loadVersionedState(storage, 'save', validGameState), updated);
+  assert.deepEqual(loadVersionedState(storage, 'save', validGameState), { status: 'valid', state: updated });
 });
 
-test('loadVersionedState_WithInvalidOrOldSave_NeverChangesStoredBytes', () => {
-  for (const raw of ['{', '{"version":2,"state":{}}', '{"version":1,"state":{"seed":0}}']) {
+test('loadVersionedState_WithMissingOrUnavailableStorage_DistinguishesBoth', () => {
+  assert.deepEqual(loadVersionedState({ getItem: () => null }, 'save', validGameState), { status: 'missing' });
+  assert.deepEqual(loadVersionedState({ getItem: () => { throw new Error('denied'); } }, 'save', validGameState),
+    { status: 'unavailable' });
+});
+
+test('loadVersionedState_WithInvalidOrOldSave_PreservesBytesAndReportsReason', () => {
+  for (const [raw, result] of [
+    ['{', { status: 'corrupt' }],
+    ['{"version":2,"state":{}}', { status: 'unsupported', version: 2 }],
+    ['{"version":1,"state":{"seed":0}}', { status: 'corrupt' }],
+  ] as const) {
     const storage = { getItem: (_key: string) => raw };
-    assert.equal(loadVersionedState(storage, 'save', validGameState), null);
+    assert.deepEqual(loadVersionedState(storage, 'save', validGameState), result);
     assert.equal(storage.getItem('save'), raw);
   }
 });

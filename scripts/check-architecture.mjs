@@ -93,16 +93,22 @@ function listRootSourceFiles(root) {
   }).sort();
 }
 
-function layerFor(srcRoot, filename, aliases) {
-  if (!within(srcRoot, filename)) return null;
+function sourceParts(srcRoot, filename, rootLayout) {
   const parts = path.relative(srcRoot, filename).split(path.sep);
+  // Root-layout projects may retain a src/ entry point or a second pure folder.
+  return rootLayout && parts[0] === 'src' ? parts.slice(1) : parts;
+}
+
+function layerFor(srcRoot, filename, aliases, rootLayout) {
+  if (!within(srcRoot, filename)) return null;
+  const parts = sourceParts(srcRoot, filename, rootLayout);
   if (parts.length === 1) return 'entry';
   if (Object.hasOwn(allowedImports, parts[0])) return parts[0];
   return Object.hasOwn(aliases, parts[0]) ? aliases[parts[0]] : 'feature';
 }
 
-function rendererFor(srcRoot, filename) {
-  const parts = path.relative(srcRoot, filename).split(path.sep);
+function rendererFor(srcRoot, filename, rootLayout) {
+  const parts = sourceParts(srcRoot, filename, rootLayout);
   return parts[0] === 'presentation' && rendererFolders.has(parts[1]) ? parts[1] : null;
 }
 
@@ -176,8 +182,9 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
   const root = path.resolve(repositoryRoot);
   const config = loadArchitectureConfig(root);
   const srcRoot = path.resolve(root, config.sourceRoot);
+  const rootLayout = config.sourceRoot === '.';
   const aliases = config.pureLayerAliases;
-  const files = config.sourceRoot === '.' ? listRootSourceFiles(root) : listSourceFiles(srcRoot);
+  const files = rootLayout ? listRootSourceFiles(root) : listSourceFiles(srcRoot);
   const errors = [];
   if (files.length === 0) errors.push(`${config.sourceRoot}/:1:1 no source files found; architecture checks cannot verify an empty project`);
   let importsCount = 0;
@@ -191,8 +198,8 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
   }
 
   for (const filename of files) {
-    const layer = layerFor(srcRoot, filename, aliases);
-    const renderer = rendererFor(srcRoot, filename);
+    const layer = layerFor(srcRoot, filename, aliases, rootLayout);
+    const renderer = rendererFor(srcRoot, filename, rootLayout);
     let syntax;
     try {
       syntax = parse(readFileSync(filename, 'utf8'), { sourceType: 'unambiguous', plugins: ['typescript', 'jsx'] });
@@ -211,8 +218,8 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
         }
         const resolved = resolveImport(specifier, filename);
         if (resolved && within(srcRoot, resolved)) {
-          const importedLayer = layerFor(srcRoot, resolved, aliases);
-          const importedRenderer = rendererFor(srcRoot, resolved);
+          const importedLayer = layerFor(srcRoot, resolved, aliases, rootLayout);
+          const importedRenderer = rendererFor(srcRoot, resolved, rootLayout);
           const permitted = layer === 'core' && importedLayer === 'data'
             ? config.dataDependency === 'core-to-data'
             : layer === 'data' && importedLayer === 'core'

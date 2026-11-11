@@ -78,6 +78,20 @@ test('checkArchitecture_WithRootLevelLayout_ProtectsCoreAndSkipsTestsAndDependen
   assert.equal(checkArchitecture(root).filesCount, 2);
 });
 
+test('checkArchitecture_WithMixedRootAndSrcLayout_PreservesEntryAndPureLayerRules', (t) => {
+  const root = fixture(t, {
+    'application/start.ts': 'export const start = 1;',
+    'src/main.ts': "import { start } from '../application/start'; export const entry = start;",
+    'src/core/random.ts': 'export const forbidden = Math.random();',
+    'src/presentation/canvas2d/overlay.ts': "import '../three/world';",
+    'src/presentation/three/world.ts': 'export const scene = 1;',
+  }, null, null, { sourceRoot: '.' });
+  const result = errors(root);
+  assert.match(result, /src\/core\/random\.ts.*core must not call Math\.random/);
+  assert.match(result, /src\/presentation\/canvas2d\/overlay\.ts.*canvas2d must not import the three renderer/);
+  assert.doesNotMatch(result, /src\/main\.ts.*must not import application/);
+});
+
 test('checkArchitecture_WithInvalidSourceRootOrDependencyPolicy_FailsClosed', (t) => {
   const files = { 'src/core/a.ts': 'export const a = 1;' };
   assert.throws(() => checkArchitecture(fixture(t, files, null, null, { sourceRoot: '../' })), /Invalid sourceRoot/);

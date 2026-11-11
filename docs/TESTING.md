@@ -15,7 +15,8 @@ fixtures to prove forbidden imports and nondeterministic calls are detected.
 `.test.js` or supported Node module extensions; keep Playwright tests as
 `.spec.ts` under `tests/browser/` so they run only in `test:browser`.
 `npm run test:examples` demonstrates seeded scenarios, snapshot round-trips,
-golden digests and shrinking; adapt or remove those game-specific examples.
+golden digests and shrinking; it also typechecks the optional examples. Adapt
+or remove those game-specific examples.
 
 Browser tests validate visible DOM, Canvas 2D and Three.js interaction,
 responsive layouts, live DPR changes, touch and WebGL lifecycle where supported. A missing
@@ -29,8 +30,10 @@ For games with saves, treat decoded storage as untrusted input. Version its
 schema; bound sizes and numbers; reject unsupported formats; test corruption,
 migration, JSON round-trips and back-forward-cache restoration. These checks
 are optional because the starter has no persistence requirement. The runnable
-`examples/testing/persistence.test.ts` demonstrates read-only validation and
-avoiding in-memory state commits when a storage write fails.
+`examples/testing/persistence.test.ts` distinguishes missing, corrupt, unsupported
+and unavailable storage without mutating saved bytes, and demonstrates avoiding
+in-memory commits when storage writes fail. Never treat an invalid save as a
+missing one and silently overwrite it.
 
 When a game adds a modal, help screen or overlay, adapt the optional input
 isolation example in `tests/browser/hybrid.spec.ts`: focused controls must not

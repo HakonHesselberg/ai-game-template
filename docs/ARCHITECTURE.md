@@ -51,7 +51,9 @@ Both configurations prohibit circular imports and keep browser/rendering APIs
 out of pure layers. `sourceRoot` accepts only `src` or `.`; the root layout
 excludes tests, dependencies, scripts and generated assets from source checks.
 `pureLayerAliases` can be combined with either option. Never enable both
-directions between core and data.
+directions between core and data. When `sourceRoot` is `.`, nested `src/` entry
+files and layer directories are classified the same way as their root-level
+counterparts, including pure-layer and renderer boundary checks.
 
 ## Invariants worth preserving
 
