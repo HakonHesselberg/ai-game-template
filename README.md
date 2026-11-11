@@ -19,7 +19,7 @@ npm run dev           # http://127.0.0.1:5173
 npm run check         # Architecture, TypeScript, unit tests, build, template guard
 ```
 
-For production-browser verification (required after rendering/input changes):
+For substantial rendering or input changes, verify in a production browser:
 
 ```bash
 npx playwright install chromium
@@ -27,8 +27,10 @@ npm run test:browser   # Builds and previews the production bundle
 ```
 
 Set `CHROMIUM_PATH=/path/to/chromium` if using an existing system Chromium.
-Browser emulation is not a real device test. Record actual results in
-[the playtest matrix](docs/PLAYTEST_MATRIX.md). A missing browser is not a pass.
+Browser emulation is not a real device test. Use the optional
+[playtest matrix](docs/PLAYTEST_MATRIX.md) for focused device testing; a missing
+browser is an unverified check, not a pass. Minor styling changes can be
+verified by inspecting the affected view directly.
 
 The supported Node range, exact TypeScript/Vite/Three.js versions and npm
 version are declared in `package.json`; `.nvmrc` selects the recommended Node.
@@ -47,9 +49,10 @@ version are declared in `package.json`; `.nvmrc` selects the recommended Node.
 | `examples/testing/` | **Optional** seeded scenarios, invariants and golden replay |
 
 Read [AGENTS.md](AGENTS.md) and [the rendering decision guide](docs/RENDERING_DECISION.md).
-Describe your game's actual layer ownership in
-[the rendering ADR](docs/decisions/0001-renderer.md), then replace the sample
-geometry, rules, controls and related tests with a small vertical slice.
+Choose each layer's role, then replace the sample geometry, rules, controls
+and related tests with a small playable slice. The
+[renderer ADR](docs/decisions/0001-renderer.md) is an optional example for
+decisions that need a written tradeoff.
 
 - **DOM-only:** remove both canvases and their renderers; keep semantic UI and
   headless state as appropriate.
@@ -69,7 +72,7 @@ an existing hook and is never required by GitHub.
 ## Existing games
 
 Do not copy this template wholesale over an established game. Opt in to the
-agent rules, renderer decision contract and local checks separately; preserve
+relevant agent rules, rendering guidance and local checks separately; preserve
 working game-specific architecture. Record the template commit and deliberate
 deviations in the game's own provenance notes.
 

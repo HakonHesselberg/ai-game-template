@@ -1,6 +1,7 @@
 # Local browser, device and accessibility playtest matrix
 
-This is an **evidence log**, not a claim that a device was tested. Start all
+This is an **optional evidence log** for focused playtests, cross-device bugs
+and release readiness—not a form to fill out after every code change. Start all
 cells as unverified. Record the date, browser/OS/device, viewport/DPR,
 test command or manual actions, result and a screenshot/log or issue reference.
 Automated emulation is **not** equivalent to a real phone, GPU or screen reader.

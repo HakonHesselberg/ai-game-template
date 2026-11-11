@@ -19,9 +19,8 @@ if grep -Eqi '(your[ -]?name|placeholder|<copyright|\[name\])' LICENSE; then
 fi
 grep -q 'MIT' README.md ||
     fail 'README must agree with the MIT LICENSE.'
-[ -f AGENTS.md ] && [ -f docs/RENDERING_DECISION.md ] &&
-    [ -f docs/decisions/0001-renderer.md ] ||
-    fail 'Agent and rendering decision documentation is missing.'
+[ -f AGENTS.md ] && [ -f docs/RENDERING_DECISION.md ] ||
+    fail 'Agent and rendering guidance is missing.'
 if grep -Ei 'GPL-3\.0|GPLv3' README.md >/dev/null; then
     fail 'Conflicting GPL licensing statements remain in setup documentation.'
 fi
@@ -44,4 +43,4 @@ fi
 sh tests/test-hook-installer.sh
 
 printf '%s\n' 'Template validation passed (license, local scripts and no GitHub Actions).'
-printf '%s\n' 'Run npm test, npm run build, and npm run test:browser separately for game verification.'
+printf '%s\n' 'Use npm run test:browser for significant renderer/input changes when available.'

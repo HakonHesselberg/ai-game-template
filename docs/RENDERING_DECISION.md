@@ -15,15 +15,13 @@ layer that has no meaningful job.
 
 ## Decide before implementation
 
-1. List the game's actual visual and input requirements, including mobile and
-   accessibility. Assign every feature to DOM, Canvas 2D or Three.js.
-2. State **why** each layer is needed; explain any omitted layer. A decorative
-   isometric look alone does not require Three.js.
-3. Record the choice in [the renderer ADR](decisions/0001-renderer.md).
-4. Test the hardest representative interaction before building the full view.
-   For a hybrid, use a moving 3D object with an aligned Canvas 2D marker and
-   a clickable HTML control. Test camera movement, resize and touch.
-5. Change the allocation early if the spike disproves the assumptions.
+1. Assign the game's actual visuals and controls to DOM, Canvas 2D or Three.js.
+   A decorative isometric look alone does not require Three.js.
+2. If ownership is ambiguous or expensive to change, briefly record the tradeoff
+   in the optional [renderer ADR](decisions/0001-renderer.md).
+3. Prototype a risky cross-layer interaction before building a large system.
+   For a hybrid, that may be a 3D object, a projected 2D marker and a DOM control.
+4. Change the allocation if the prototype disproves the assumptions.
 
 ## Hybrid implementation contract
 
@@ -53,7 +51,8 @@ layer that has no meaningful job.
 
 ## Acceptance evidence
 
-For the selected composition, verify visible behavior, coordinate alignment,
-pointer/touch/keyboard routing, desktop/portrait/landscape resize, error
-handling and resource cleanup. Record commands actually run and any manual
-checks still outstanding. No GitHub Actions.
+Verify behavior relevant to the game's actual layers. For substantial hybrid
+changes, check alignment, input routing, resize, recovery and cleanup. Record
+what was actually checked and any important gaps. Do not require irrelevant
+renderer tests or a formal decision record for a straightforward game.
+No GitHub Actions.

@@ -68,8 +68,8 @@ counterparts, including pure-layer and renderer boundary checks.
   state or leak resources.
 
 The runnable hybrid example is a vertical slice, **not** a requirement that
-every game use all three layers. Remove an unused renderer and record why in
-[the renderer ADR](decisions/0001-renderer.md).
+every game use all three layers. Remove unused renderers; use the optional
+[renderer ADR](decisions/0001-renderer.md) only for decisions worth documenting.
 
-Run `npm run lint:architecture`, `npm run check`, and the browser smoke test
-for presentation changes. See [TESTING.md](TESTING.md).
+Run `npm run check` for code changes and the browser smoke test for significant
+rendering or input integration changes when available. See [TESTING.md](TESTING.md).

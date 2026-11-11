@@ -1,6 +1,7 @@
 # ADR-0001 — Renderer allocation for the starter example
 
-**Status:** Starter demonstration; replace this decision for each new game.
+**Status:** Optional example. Replace it only when a game has a renderer tradeoff
+worth recording; straightforward games do not need a formal ADR.
 
 ## Requirements and choice
 
@@ -38,5 +39,5 @@ controls, then resize through portrait and landscape and test WebGL context
 loss/restoration where supported.
 Run it in Chromium locally along with `npm run check`. The sample is not a
 universal requirement to use all three layers: remove unused layers in a
-game and explain the new allocation in this ADR. Revisit if target alignment,
+game. Record important tradeoffs here if useful. Revisit if target alignment,
 input behavior, performance or accessibility differs from requirements.

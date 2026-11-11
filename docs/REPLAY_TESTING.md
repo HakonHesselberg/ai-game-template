@@ -51,5 +51,5 @@ sample score/target conditions blindly into unrelated games.
 Keep headless replay tests fast and deterministic. Profile frame times and
 test duration locally on representative hardware; choose budgets from
 observed measurements, not an arbitrary universal 16 ms unit assertion.
-Use [PLAYTEST_MATRIX.md](PLAYTEST_MATRIX.md) for browser, device and
+Consider [PLAYTEST_MATRIX.md](PLAYTEST_MATRIX.md) for focused browser, device and
 assistive-technology evidence separately from headless checks.

@@ -22,7 +22,7 @@ Browser tests validate visible DOM, Canvas 2D and Three.js interaction,
 responsive layouts, live DPR changes, touch and WebGL lifecycle where supported. A missing
 browser, failing startup or WebGL error is **not** a pass. Real phones,
 assistive technology and different GPUs need separate evidence in
-[PLAYTEST_MATRIX.md](PLAYTEST_MATRIX.md).
+[PLAYTEST_MATRIX.md](PLAYTEST_MATRIX.md) when those devices matter to the game.
 Playwright retains screenshots and traces for failures in the ignored
 `test-results/` directory when a browser launches; review them locally.
 
@@ -39,7 +39,7 @@ When a game adds a modal, help screen or overlay, adapt the optional input
 isolation example in `tests/browser/hybrid.spec.ts`: focused controls must not
 trigger world shortcuts, and closing a dialog must restore game input.
 
-Before completion, report the commands actually run, pass/fail counts, manual
-checks, outstanding device checks and known risks. Do not regenerate a replay
-golden file merely to make a test green; document why the expected behavior
-changed. See [REPLAY_TESTING.md](REPLAY_TESTING.md).
+For small tasks, a concise check summary is enough. Expand browser/device
+evidence for substantial changes and playtest milestones. Do not regenerate
+a replay golden file merely to make a test green; document why expected
+behavior changed. See [REPLAY_TESTING.md](REPLAY_TESTING.md).
