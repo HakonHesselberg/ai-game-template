@@ -4,13 +4,16 @@ All tests run **locally**. Never add or depend on GitHub Actions.
 
 ```bash
 npm ci
-npm run check             # Architecture, types, core tests, build, template guard
+npm run check             # Architecture, core tests, types, build, no Actions
+npm run check:template    # Template maintainers only: MIT/docs/local hook checks
 npm run test:examples     # Optional sample replay / invariant tests
 npm run test:browser      # Production preview + Playwright Chromium smoke tests
 ```
 
 `npm run check` is the default fast gate. It includes negative architecture
-fixtures to prove forbidden imports and nondeterministic calls are detected.
+fixtures to prove forbidden imports and nondeterministic calls are detected,
+plus a mandatory no-GitHub-Actions check. Template-only license and hook
+requirements do not apply to generated games.
 `npm test` discovers unit tests recursively under `tests/` with `.test.ts`,
 `.test.js` or supported Node module extensions; keep Playwright tests as
 `.spec.ts` under `tests/browser/` so they run only in `test:browser`.

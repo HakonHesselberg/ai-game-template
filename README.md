@@ -13,10 +13,9 @@ remove any renderer it does not need.
 Create a repository using GitHub's **Use this template** button, then:
 
 ```bash
-nvm use               # Recommended version in .nvmrc
 npm ci                # Locked dependencies
 npm run dev           # http://127.0.0.1:5173
-npm run check         # Architecture, TypeScript, unit tests, build, template guard
+npm run check         # Architecture, tests, build, no-GitHub-Actions policy
 ```
 
 For substantial rendering or input changes, verify in a production browser:
@@ -32,8 +31,9 @@ Browser emulation is not a real device test. Use the optional
 browser is an unverified check, not a pass. Minor styling changes can be
 verified by inspecting the affected view directly.
 
-The supported Node range, exact TypeScript/Vite/Three.js versions and npm
-version are declared in `package.json`; `.nvmrc` selects the recommended Node.
+Use a supported Node version from `package.json`; `.nvmrc` selects the
+recommended version if you use `nvm` (`nvm use` is optional).
+Exact TypeScript/Vite/Three.js versions and npm version are in `package.json`.
 
 ## Where to work
 
@@ -65,6 +65,10 @@ they are intentionally **not** in the default `npm run check` gate. Adapt
 them to your game's rules if useful. See [replay testing](docs/REPLAY_TESTING.md),
 [architecture](docs/ARCHITECTURE.md) and [local testing](docs/TESTING.md).
 
+`npm run check:template` adds MIT attribution, documentation and local-hook
+validation for maintainers of **this template**. Generated games only need
+`npm run check`; adapt the sample tests and checks as their game evolves.
+
 An optional local pre-commit hook can be installed with
 `./scripts/install-hooks.sh scripts/project-checks.sh`. It will not overwrite
 an existing hook and is never required by GitHub.
@@ -79,4 +83,5 @@ deviations in the game's own provenance notes.
 **License:** [MIT](LICENSE). When creating a game, preserve the template's
 original copyright and permission notice for copied code. You may add your
 own copyright notice and choose a different license for your original game
-code; document the choice and adapt the local license validation accordingly.
+code; document the choice. Template-only license validation is not part of a
+game's default checks.

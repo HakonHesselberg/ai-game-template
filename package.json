@@ -14,7 +14,9 @@
     "typecheck:examples": "tsc --noEmit -p tsconfig.examples.json",
     "test:browser": "playwright test",
     "lint:architecture": "node scripts/check-architecture.mjs",
-    "check": "npm run lint:architecture && npm test && npm run build && ./scripts/validate-template.sh"
+    "check:no-actions": "node scripts/check-no-actions.mjs",
+    "check": "npm run check:no-actions && npm run lint:architecture && npm test && npm run build",
+    "check:template": "npm run check && ./scripts/validate-template.sh"
   },
   "dependencies": {
     "three": "0.187.0"

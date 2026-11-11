@@ -22,9 +22,10 @@ budgets and formal design records only when the game needs them.
   feature folders. See `docs/ARCHITECTURE.md`.
 - Run `npm run check` locally for code changes. It enforces architecture
   boundaries, determinism guardrails, unit tests, types, build and the
-  no-Actions template check. Do not bypass an architecture finding without
-  recording and deliberately updating the policy in
-  `scripts/check-architecture.mjs`.
+  no-Actions policy. `npm run check:template` additionally checks template-only
+  metadata and local hook scripts; games do not need that command. Do not
+  bypass an architecture finding without deliberately updating and recording
+  the policy in `scripts/check-architecture.mjs`.
 - When a game needs replay, adapt the optional `examples/testing/` patterns.
   Golden baselines require a deliberate revision reason; a changed digest
   alone is not proof of correctness. See `docs/REPLAY_TESTING.md`.
