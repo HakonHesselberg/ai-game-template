@@ -27,8 +27,12 @@ const prohibitedGlobals = new Set([
   'Date', 'performance', 'window', 'document', 'navigator', 'location',
   'localStorage', 'sessionStorage', 'requestAnimationFrame', 'cancelAnimationFrame',
   'setTimeout', 'setInterval', 'fetch', 'WebSocket', 'Worker', 'crypto',
-  'globalThis', 'process',
+  'globalThis', 'process', 'HTMLElement', 'HTMLCanvasElement', 'Window',
+  'Document', 'CanvasRenderingContext2D', 'WebGLRenderingContext',
+  'WebGL2RenderingContext', 'PointerEvent', 'KeyboardEvent', 'MouseEvent',
+  'TouchEvent', 'ResizeObserver', 'EventTarget', 'Storage', 'ImageData',
 ]);
+const styleImport = /\.(?:css|scss|sass|less)(?:\?.*)?$/i;
 const sourceExtensions = new Set(['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs']);
 const rendererFolders = new Set(['dom', 'canvas2d', 'three']);
 
@@ -140,7 +144,9 @@ function isNonReferenceName(node, parent, parentKey) {
   if ((parent.type === 'MemberExpression' || parent.type === 'OptionalMemberExpression') && parentKey === 'property' && !parent.computed) return true;
   if ((parent.type === 'ObjectProperty' || parent.type === 'ObjectMethod') && parentKey === 'key' && !parent.computed && !parent.shorthand) return true;
   if ((parent.type === 'TSPropertySignature' || parent.type === 'TSMethodSignature') && parentKey === 'key') return true;
-  if (parent.type === 'TSTypeReference' && parentKey === 'typeName') return true;
+  // Date is harmless as a type, but DOM/WebGL types couple headless modules
+  // to a browser even when the import is erased at runtime.
+  if (parent.type === 'TSTypeReference' && parentKey === 'typeName') return node.name === 'Date';
   return false;
 }
 
@@ -177,6 +183,9 @@ export function checkArchitecture(repositoryRoot = path.resolve(path.dirname(fil
       if (source) {
         importsCount += 1;
         const specifier = source.value;
+        if (pureLayers.has(layer) && styleImport.test(specifier)) {
+          report(filename, source, `${layer} must not import stylesheets: ${specifier}`);
+        }
         const resolved = resolveImport(specifier, filename);
         if (resolved && within(srcRoot, resolved)) {
           const importedLayer = layerFor(srcRoot, resolved, aliases);

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { applyCommand, createGame, stepGame, targetPosition } from '../src/core/game.ts';
+import { applyCommand, createGame, stepGame, targetPosition } from '../../src/core/game.ts';
 
 test('stepGame_WithSameInput_ReturnsDeterministicStateWithoutMutation', () => {
   const initial = createGame(42);

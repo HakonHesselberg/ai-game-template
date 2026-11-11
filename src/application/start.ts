@@ -17,12 +17,18 @@ export function startGame() {
   let accumulator = 0;
   let previousFrame = performance.now();
   let frameId = 0;
-  const world = createWorld(worldCanvas);
   const overlay = createOverlay(overlayCanvas);
-  const hud = createHud(
-    () => { state = applyCommand(state, { type: 'toggle-pause' }); },
-    () => { state = applyCommand(state, { type: 'reset' }); accumulator = 0; },
-  );
+  const world = createWorld(worldCanvas);
+  let hud: ReturnType<typeof createHud>;
+  try {
+    hud = createHud(
+      () => { state = applyCommand(state, { type: 'toggle-pause' }); },
+      () => { state = applyCommand(state, { type: 'reset' }); accumulator = 0; },
+    );
+  } catch (error) {
+    world.dispose();
+    throw error;
+  }
 
   function resize() {
     const { width, height } = playfield!.getBoundingClientRect();
@@ -37,8 +43,10 @@ export function startGame() {
   }
 
   function keyDown(event: KeyboardEvent) {
+    if (event.defaultPrevented || event.repeat) return;
     const focused = event.target;
-    if (focused instanceof HTMLButtonElement || focused instanceof HTMLInputElement) return;
+    if (focused instanceof HTMLElement &&
+        (focused.isContentEditable || focused.closest('button, input, textarea, select, a[href], [role="button"], [role="textbox"]'))) return;
     if (event.code === 'Space') {
       event.preventDefault();
       state = applyCommand(state, { type: 'toggle-pause' });
@@ -84,29 +92,36 @@ export function startGame() {
     frameId = requestAnimationFrame(frame);
   }
 
-  const observer = new ResizeObserver(resize);
-  observer.observe(playfield);
-  worldCanvas.addEventListener('pointerdown', pointerDown);
-  worldCanvas.addEventListener('webglcontextlost', lostContext);
-  worldCanvas.addEventListener('webglcontextrestored', restoredContext);
-  window.addEventListener('keydown', keyDown);
-  document.addEventListener('visibilitychange', visibilityChange);
-  window.addEventListener('pagehide', visibilityChange);
-  window.addEventListener('pageshow', visibilityChange);
-  resize();
-  frameId = requestAnimationFrame(frame);
-
-  return function dispose() {
+  let observer: ResizeObserver | undefined;
+  function dispose() {
     cancelAnimationFrame(frameId);
-    observer.disconnect();
-    worldCanvas.removeEventListener('pointerdown', pointerDown);
-    worldCanvas.removeEventListener('webglcontextlost', lostContext);
-    worldCanvas.removeEventListener('webglcontextrestored', restoredContext);
+    observer?.disconnect();
+    worldCanvas!.removeEventListener('pointerdown', pointerDown);
+    worldCanvas!.removeEventListener('webglcontextlost', lostContext);
+    worldCanvas!.removeEventListener('webglcontextrestored', restoredContext);
     window.removeEventListener('keydown', keyDown);
     document.removeEventListener('visibilitychange', visibilityChange);
     window.removeEventListener('pagehide', visibilityChange);
     window.removeEventListener('pageshow', visibilityChange);
     hud.dispose();
     world.dispose();
-  };
+  }
+
+  try {
+    observer = new ResizeObserver(resize);
+    observer.observe(playfield);
+    worldCanvas.addEventListener('pointerdown', pointerDown);
+    worldCanvas.addEventListener('webglcontextlost', lostContext);
+    worldCanvas.addEventListener('webglcontextrestored', restoredContext);
+    window.addEventListener('keydown', keyDown);
+    document.addEventListener('visibilitychange', visibilityChange);
+    window.addEventListener('pagehide', visibilityChange);
+    window.addEventListener('pageshow', visibilityChange);
+    resize();
+    frameId = requestAnimationFrame(frame);
+  } catch (error) {
+    dispose();
+    throw error;
+  }
+  return dispose;
 }

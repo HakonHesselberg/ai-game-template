@@ -11,6 +11,9 @@ npm run test:browser      # Production preview + Playwright Chromium smoke tests
 
 `npm run check` is the default fast gate. It includes negative architecture
 fixtures to prove forbidden imports and nondeterministic calls are detected.
+`npm test` discovers unit tests recursively under `tests/` with `.test.ts`,
+`.test.js` or supported Node module extensions; keep Playwright tests as
+`.spec.ts` under `tests/browser/` so they run only in `test:browser`.
 `npm run test:examples` demonstrates seeded scenarios, snapshot round-trips,
 golden digests and shrinking; adapt or remove those game-specific examples.
 

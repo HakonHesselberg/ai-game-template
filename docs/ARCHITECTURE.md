@@ -20,6 +20,8 @@ Shared presentation types belong in `src/presentation/` (for example
 folders can be introduced deliberately. The local checker protects known
 layer boundaries; review third-party packages for deterministic/browser-free
 behavior instead of treating the checker as a security sandbox.
+Pure layers must not import stylesheets or reference browser-only DOM/WebGL
+types, even in type annotations.
 
 Unrecognized `src/` folders are treated as **features**, not pure rules. If a
 game introduces a separate deterministic folder, opt it into the existing

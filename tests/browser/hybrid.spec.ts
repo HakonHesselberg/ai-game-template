@@ -81,6 +81,25 @@ test('hybrid_WithProductionBuild_AlignsCanvasAndThreeAndHandlesDesktopResizes', 
   const errors = collectBrowserErrors(page);
   await expectHybridReady(page);
   await expectControlsInViewport(page);
+  await page.locator('#world').focus();
+  await page.evaluate(() => {
+    const world = document.getElementById('world')!;
+    for (const code of ['Space', 'Enter']) {
+      world.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, code, repeat: true }));
+    }
+  });
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await expect(page.locator('#score')).toHaveText('0');
+  await page.evaluate(() => {
+    const textarea = document.createElement('textarea');
+    textarea.id = 'typing-test';
+    document.getElementById('app')!.append(textarea);
+  });
+  await page.locator('#typing-test').focus();
+  await page.keyboard.press('Space');
+  await expect(page.locator('#typing-test')).toHaveValue(' ');
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await page.locator('#typing-test').evaluate((element) => element.remove());
   // A Canvas 2D marker and a successful raycast alone do not prove WebGL drew.
   await expect.poll(async () => {
     const [red = 0, green = 0, , alpha = 0] = await readWorldPixelAtMarker(page);

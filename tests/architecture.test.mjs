@@ -86,6 +86,24 @@ test('checkArchitecture_WithPureDependencyAndTypeOnlyDate_AllowsBoth', (t) => {
   assert.equal(errors(root), '');
 });
 
+test('checkArchitecture_WithBrowserOnlyTypesInCore_RejectsEvenTypeOnlyUses', (t) => {
+  const root = fixture(t, {
+    'src/core/state.ts': 'export interface State { element: HTMLElement; canvas: HTMLCanvasElement; context: WebGL2RenderingContext }',
+  });
+  const result = errors(root);
+  assert.match(result, /core must not depend on HTMLElement/);
+  assert.match(result, /core must not depend on HTMLCanvasElement/);
+  assert.match(result, /core must not depend on WebGL2RenderingContext/);
+});
+
+test('checkArchitecture_WithStylesheetImportInPureLayer_RejectsSideEffects', (t) => {
+  const root = fixture(t, {
+    'src/core/state.ts': "import './styles.css'; export const state = 1;",
+    'src/core/styles.css': '.game { color: red; }',
+  });
+  assert.match(errors(root), /core must not import stylesheets: .\/styles.css/);
+});
+
 test('checkArchitecture_WithDirectRendererCoupling_RequiresSharedContract', (t) => {
   const root = fixture(t, {
     'src/presentation/canvas2d/overlay.ts': "import type { Point } from '../three/world'; export type P = Point;",
